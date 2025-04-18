@@ -1,2 +1,2 @@
-# today
-Make Today Count
+# TODAI
+Make Today Count With AI
