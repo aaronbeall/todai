@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { TextField, Button, Stack, Card, CardContent, Typography, Box, IconButton, Drawer, List, ListItem, ListItemText, Chip, ListItemIcon, Badge } from '@mui/material';
+import { TextField, Button, Stack, Card, CardContent, Typography, Box, IconButton, Drawer, List, ListItem, ListItemText, Chip, ListItemIcon, Badge, ListItemButton } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Edit, Archive, Delete, Add } from '@mui/icons-material';
 import { addTodo, getTodos, deleteTodo, getTags, Todo, Tag } from './db';
@@ -108,24 +108,40 @@ function App() {
             Tags
           </Typography>
           <List>
-            <ListItem
-              button
+            <ListItemButton
               onClick={() => setSelectedTag(null)}
               selected={selectedTag === null}
+              sx={{
+                textTransform: 'none',
+                color: selectedTag === null ? 'white' : 'inherit',
+                backgroundColor: selectedTag === null ? getTitleColor() : 'transparent',
+                '&.Mui-selected': {
+                  backgroundColor: getTitleColor(),
+                  color: 'white',
+                },
+              }}
             >
               <ListItemText primary="All Todos" />
-            </ListItem>
+            </ListItemButton>
             {tags.map((tag) => {
               const incompleteCount = todos.filter(
                 (todo) => !todo.completed && todo.tags.some((t) => t.toLowerCase() === tag.name.toLowerCase())
               ).length;
 
               return (
-                <ListItem
-                  button
+                <ListItemButton
                   key={tag.id}
                   onClick={() => setSelectedTag(tag.name)}
                   selected={selectedTag?.toLowerCase() === tag.name.toLowerCase()}
+                  sx={{
+                    textTransform: 'none',
+                    color: selectedTag?.toLowerCase() === tag.name.toLowerCase() ? 'white' : 'inherit',
+                    backgroundColor: selectedTag?.toLowerCase() === tag.name.toLowerCase() ? getTitleColor() : 'transparent',
+                    '&.Mui-selected': {
+                      backgroundColor: getTitleColor(),
+                      color: 'white',
+                    },
+                  }}
                 >
                   <ListItemIcon>
                     <Chip
@@ -148,7 +164,7 @@ function App() {
                       },
                     }}
                   />
-                </ListItem>
+                </ListItemButton>
               );
             })}
           </List>
@@ -161,6 +177,7 @@ function App() {
           right: 16,
           fontSize: '0.9rem',
           opacity: 0.7,
+          color: getTitleColor(),
         }}
       >
         {currentTime}
