@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { TextField, Button, Stack, Card, CardContent, Typography, Box, IconButton, Drawer, List, ListItem, ListItemText, Chip, ListItemIcon, Badge } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Edit, Archive, Delete } from '@mui/icons-material';
+import { Edit, Archive, Delete, Add } from '@mui/icons-material';
 import { addTodo, getTodos, deleteTodo, getTags, Todo, Tag } from './db';
 import { getGradientBackground, getTitleColor } from './theme';
 import './App.css';
@@ -154,16 +154,47 @@ function App() {
         {getCurrentDay()}
       </Typography>
       <Stack spacing={2}>
-        <TextField
-          variant="outlined"
-          label="Add a new todo"
-          value={newTodo}
-          onChange={(e) => setNewTodo(e.target.value)}
-          fullWidth
-        />
-        <Button variant="contained" onClick={handleAddTodo}>
-          Add Todo
-        </Button>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <TextField
+            variant="outlined"
+            label="Add a new todo"
+            value={newTodo}
+            onChange={(e) => setNewTodo(e.target.value)}
+            fullWidth
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  borderColor: getTitleColor(),
+                },
+                '&:hover fieldset': {
+                  borderColor: getTitleColor(),
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: getTitleColor(),
+                },
+              },
+              '& .MuiInputLabel-root': {
+                color: getTitleColor(),
+              },
+              '& .MuiInputLabel-root.Mui-focused': {
+                color: getTitleColor(),
+              },
+            }}
+          />
+          <IconButton
+            onClick={handleAddTodo}
+            sx={{
+              backgroundColor: getTitleColor(),
+              color: 'white',
+              '&:hover': {
+                backgroundColor: getTitleColor(),
+                opacity: 0.9,
+              },
+            }}
+          >
+            <Add />
+          </IconButton>
+        </Box>
         <Stack spacing={2}>
           {filteredTodos
             .filter((todo) => !todo.completed)
