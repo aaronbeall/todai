@@ -5,6 +5,7 @@ import { Edit, Archive, Delete, Add } from '@mui/icons-material';
 import { addTodo, getTodos, deleteTodo, getTags, Todo, Tag } from './db';
 import { getGradientBackground, getTitleColor } from './theme';
 import './App.css';
+import TodoCard from './components/TodoCard';
 
 function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -58,6 +59,15 @@ function App() {
     setSelectedTag(tagName);
   };
 
+  const handleToggleComplete = async (id: number, completed: boolean) => {
+    const todo = todos.find((t) => t.id === id);
+    if (todo) {
+      const updatedTodo = { ...todo, completed };
+      await addTodo(updatedTodo); // Update the todo in the database
+      setTodos(await getTodos()); // Refresh the todos
+    }
+  };
+
   const getCurrentDay = () => {
     return new Date().toLocaleDateString(undefined, { weekday: 'long' });
   };
@@ -82,7 +92,17 @@ function App() {
       >
         <MenuIcon style={{ color: 'white' }} />
       </IconButton>
-      <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+      <Drawer
+        anchor="left"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        sx={{
+          '& .MuiDrawer-paper': {
+            backgroundColor: 'rgba(255, 255, 255, 0.6)', // Semi-transparent white
+            backdropFilter: 'blur(10px)', // Blur effect
+          },
+        }}
+      >
         <Box sx={{ width: 250, padding: 2 }}>
           <Typography variant="h6" gutterBottom>
             Tags
@@ -199,39 +219,19 @@ function App() {
           {filteredTodos
             .filter((todo) => !todo.completed)
             .map((todo) => (
-              <Card key={todo.id}>
-                <CardContent sx={{ position: 'relative' }}>
-                  <Stack direction="row" spacing={1} sx={{ position: 'absolute', top: 8, right: 8 }}>
-                    <IconButton onClick={() => handleEditTodo(todo.id)}>
-                      <Edit />
-                    </IconButton>
-                    <IconButton onClick={() => handleArchiveTodo(todo.id)}>
-                      <Archive />
-                    </IconButton>
-                    <IconButton onClick={() => handleDeleteTodo(todo.id)}>
-                      <Delete />
-                    </IconButton>
-                  </Stack>
-                  <Typography>{todo.text}</Typography>
-                  <Stack direction="row" spacing={1} sx={{ marginTop: 1 }}>
-                    {todo.tags.map((tag) => {
-                      const tagObj = tags.find((t) => t.name.toLowerCase() === tag.toLowerCase());
-                      return (
-                        <Chip
-                          key={tag}
-                          label={tag}
-                          onClick={() => handleTagClick(tag)}
-                          sx={{
-                            backgroundColor: tagObj?.color || 'gray',
-                            color: 'white',
-                            cursor: 'pointer',
-                          }}
-                        />
-                      );
-                    })}
-                  </Stack>
-                </CardContent>
-              </Card>
+              <TodoCard
+                key={todo.id}
+                id={todo.id}
+                text={todo.text}
+                tags={todo.tags}
+                completed={todo.completed}
+                onEdit={handleEditTodo}
+                onArchive={handleArchiveTodo}
+                onDelete={handleDeleteTodo}
+                onToggleComplete={handleToggleComplete}
+                onTagClick={handleTagClick}
+                tagData={tags}
+              />
             ))}
         </Stack>
         <Typography
@@ -244,39 +244,19 @@ function App() {
           {filteredTodos
             .filter((todo) => todo.completed)
             .map((todo) => (
-              <Card key={todo.id}>
-                <CardContent sx={{ position: 'relative' }}>
-                  <Stack direction="row" spacing={1} sx={{ position: 'absolute', top: 8, right: 8 }}>
-                    <IconButton onClick={() => handleEditTodo(todo.id)}>
-                      <Edit />
-                    </IconButton>
-                    <IconButton onClick={() => handleArchiveTodo(todo.id)}>
-                      <Archive />
-                    </IconButton>
-                    <IconButton onClick={() => handleDeleteTodo(todo.id)}>
-                      <Delete />
-                    </IconButton>
-                  </Stack>
-                  <Typography>{todo.text}</Typography>
-                  <Stack direction="row" spacing={1} sx={{ marginTop: 1 }}>
-                    {todo.tags.map((tag) => {
-                      const tagObj = tags.find((t) => t.name.toLowerCase() === tag.toLowerCase());
-                      return (
-                        <Chip
-                          key={tag}
-                          label={tag}
-                          onClick={() => handleTagClick(tag)}
-                          sx={{
-                            backgroundColor: tagObj?.color || 'gray',
-                            color: 'white',
-                            cursor: 'pointer',
-                          }}
-                        />
-                      );
-                    })}
-                  </Stack>
-                </CardContent>
-              </Card>
+              <TodoCard
+                key={todo.id}
+                id={todo.id}
+                text={todo.text}
+                tags={todo.tags}
+                completed={todo.completed}
+                onEdit={handleEditTodo}
+                onArchive={handleArchiveTodo}
+                onDelete={handleDeleteTodo}
+                onToggleComplete={handleToggleComplete}
+                onTagClick={handleTagClick}
+                tagData={tags}
+              />
             ))}
         </Stack>
       </Stack>
