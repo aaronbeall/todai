@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { TextField, Button, Stack, Card, CardContent, Typography, Box } from '@mui/material';
-import { addTodo, getTodos, deleteTodo } from './db';
+import { addTodo, getTodos, deleteTodo, Todo } from './db';
 import './App.css';
 
 function App() {
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodo, setNewTodo] = useState('');
+  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
 
   useEffect(() => {
     const fetchTodos = async () => {
@@ -13,6 +14,12 @@ function App() {
       setTodos(todosFromDB);
     };
     fetchTodos();
+
+    const timer = setInterval(() => {
+      setCurrentTime(new Date().toLocaleTimeString());
+    }, 1000);
+
+    return () => clearInterval(timer);
   }, []);
 
   const handleAddTodo = async () => {
@@ -32,9 +39,13 @@ function App() {
 
   const gradientBackground = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return 'linear-gradient(to right, #FFDEE9, #B5FFFC)';
-    if (hour < 18) return 'linear-gradient(to right, #FF9A8B, #FF6A88, #FF99AC)';
-    return 'linear-gradient(to right, #1E3C72, #2A5298)';
+    if (hour < 12) return 'linear-gradient(to bottom, #FFDEE9, #B5FFFC)';
+    if (hour < 18) return 'linear-gradient(to bottom, #FF9A8B, #FF6A88, #FF99AC)';
+    return 'linear-gradient(to bottom, #1E3C72, #2A5298)';
+  };
+
+  const getCurrentDay = () => {
+    return new Date().toLocaleDateString(undefined, { weekday: 'long' });
   };
 
   return (
@@ -44,10 +55,26 @@ function App() {
         padding: 2,
         background: gradientBackground(),
         color: 'white',
+        position: 'relative',
       }}
     >
-      <Typography variant="h3" gutterBottom>
-        Todo List
+      <Typography
+        sx={{
+          position: 'absolute',
+          top: 16,
+          right: 16,
+          fontSize: '0.9rem',
+          opacity: 0.7,
+        }}
+      >
+        {currentTime}
+      </Typography>
+      <Typography
+        variant="h3"
+        gutterBottom
+        align="center" // Center-align the title
+      >
+        {getCurrentDay()}
       </Typography>
       <Stack spacing={2}>
         <TextField

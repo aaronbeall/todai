@@ -1,13 +1,13 @@
 import { openDB, DBSchema } from 'idb';
 
-interface Todo {
+export interface Todo {
   id: number;
   text: string;
   completed: boolean;
-  tags: number[]; // List of Tag IDs
+  tags: number[];
 }
 
-interface Tag {
+export interface Tag {
   id: number;
   name: string;
 }
