@@ -3,6 +3,7 @@ import { TextField, Button, Stack, Card, CardContent, Typography, Box, IconButto
 import MenuIcon from '@mui/icons-material/Menu';
 import { Edit, Archive, Delete } from '@mui/icons-material';
 import { addTodo, getTodos, deleteTodo, getTags, Todo, Tag } from './db';
+import { getGradientBackground, getTitleColor } from './theme';
 import './App.css';
 
 function App() {
@@ -33,20 +34,18 @@ function App() {
     if (newTodo.trim()) {
       const tags = Array.from(newTodo.matchAll(/#\w+/g)).map((match) => match[0]);
       const todo = { text: newTodo, completed: false, tags };
-      await addTodo(todo); // This will also handle adding new tags to the database
+      await addTodo(todo);
       setTodos(await getTodos());
-      setTags(await getTags()); // Refresh tags after adding new ones
+      setTags(await getTags());
       setNewTodo('');
     }
   };
 
   const handleEditTodo = (id: number) => {
-    // Logic for editing a todo
     console.log(`Edit todo with id: ${id}`);
   };
 
   const handleArchiveTodo = (id: number) => {
-    // Logic for archiving a todo
     console.log(`Archive todo with id: ${id}`);
   };
 
@@ -57,20 +56,6 @@ function App() {
 
   const handleTagClick = (tagName: string) => {
     setSelectedTag(tagName);
-  };
-
-  const gradientBackground = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'linear-gradient(to bottom, #FFDEE9, #B5FFFC)';
-    if (hour < 18) return 'linear-gradient(to bottom, #FF9A8B, #FF6A88, #FF99AC)';
-    return 'linear-gradient(to bottom, #1E3C72, #2A5298)';
-  };
-
-  const getTitleColor = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return '#FF6F91'; // Morning gradient matching color
-    if (hour < 18) return '#FF3D68'; // Afternoon gradient matching color
-    return '#A1C4FD'; // Evening gradient matching color
   };
 
   const getCurrentDay = () => {
@@ -86,7 +71,7 @@ function App() {
       sx={{
         minHeight: '100vh',
         padding: 2,
-        background: gradientBackground(),
+        background: getGradientBackground(),
         color: 'white',
         position: 'relative',
       }}
@@ -164,7 +149,7 @@ function App() {
         variant="h3"
         gutterBottom
         align="center"
-        sx={{ color: getTitleColor() }} // Set title color dynamically
+        sx={{ color: getTitleColor() }}
       >
         {getCurrentDay()}
       </Typography>
@@ -220,7 +205,7 @@ function App() {
         </Stack>
         <Typography
           variant="h5"
-          sx={{ color: getTitleColor() }} // Use dynamic color for "Completed" heading
+          sx={{ color: getTitleColor() }}
         >
           Completed
         </Typography>
