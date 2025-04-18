@@ -4,12 +4,13 @@ export interface Todo {
   id: number;
   text: string;
   completed: boolean;
-  tags: number[];
+  tags: string[];
 }
 
 export interface Tag {
   id: number;
   name: string;
+  color: string;
 }
 
 interface TodoDBSchema extends DBSchema {
@@ -24,7 +25,7 @@ interface TodoDBSchema extends DBSchema {
 }
 
 const DB_NAME = 'TodoDB';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 export const getDB = async () => {
   return openDB<TodoDBSchema>(DB_NAME, DB_VERSION, {
@@ -40,8 +41,27 @@ export const getDB = async () => {
 };
 
 // Utility functions for Todos
+const getRandomColor = () => {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+};
+
 export const addTodo = async (todo: Todo) => {
   const db = await getDB();
+
+  // Add new tags to the tags database if they don't already exist
+  const existingTags = await getTags();
+  const existingTagNames = existingTags.map((tag) => tag.name.toLowerCase());
+  for (const tag of todo.tags) {
+    if (!existingTagNames.includes(tag.toLowerCase())) {
+      await addTag({ id: Date.now(), name: tag, color: getRandomColor() }); // Assign random color
+    }
+  }
+
   await db.put('todos', todo);
 };
 
