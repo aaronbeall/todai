@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { TextField, Button, Stack, Card, CardContent, Typography, Box, IconButton, Drawer, List, ListItem, ListItemText, Chip, ListItemIcon, Badge, ListItemButton, Dialog, DialogActions, DialogContent, DialogTitle, Slider } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Edit, Archive, Delete, Add } from '@mui/icons-material';
@@ -17,6 +17,7 @@ function App() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [timeOffset, setTimeOffset] = useState(0);
   const [timeDialogOpen, setTimeDialogOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchTodosAndTags = async () => {
@@ -33,6 +34,18 @@ function App() {
 
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    if (dialogOpen) {
+      const timer = setTimeout(() => {
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
+      }, 100); // Delay to ensure dialog is fully rendered
+
+      return () => clearTimeout(timer);
+    }
+  }, [dialogOpen]);
 
   const handleAddTodo = async () => {
     if (newTodo.trim()) {
@@ -87,10 +100,6 @@ function App() {
     const simulatedDate = new Date();
     simulatedDate.setHours(simulatedDate.getHours() + timeOffset);
     return simulatedDate.toLocaleDateString(undefined, { weekday: 'long' });
-  };
-
-  const getCurrentDay = () => {
-    return new Date().toLocaleDateString(undefined, { weekday: 'long' });
   };
 
   const filteredTodos = selectedTag
@@ -211,7 +220,7 @@ function App() {
         <DialogContent>
           <Slider
             value={timeOffset}
-            onChange={(e, newValue) => setTimeOffset(newValue)}
+            onChange={(_, newValue) => setTimeOffset(newValue)} // Ignore `e` parameter
             min={-12}
             max={12}
             step={1}
@@ -250,46 +259,77 @@ function App() {
         </IconButton>
       </Box>
 
-      <Dialog open={dialogOpen} onClose={handleDialogClose}>
-        <DialogTitle>Add a New Todo</DialogTitle>
-        <DialogContent>
+      <Dialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        maxWidth="sm"
+        fullWidth
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            if (newTodo.trim()) {
+              handleAddTodo();
+              setTimeout(handleDialogClose);
+            }
+          } else if (e.key === 'Escape') {
+            handleDialogClose();
+          }
+        }}
+      >
+        <DialogTitle sx={{ textAlign: 'center', fontSize: '2rem', color: getTitleColor(timeOffset) }}>
+          🎉 Add a New Todo 📝
+        </DialogTitle>
+        <DialogContent sx={{ textAlign: 'center', padding: 4 }}>
+          <Typography variant="h6" gutterBottom sx={{ color: getTitleColor(timeOffset) }}>
+            What do you want to accomplish today? 🌟
+          </Typography>
           <TextField
             variant="outlined"
-            label="Add a new todo"
             value={newTodo}
             onChange={(e) => setNewTodo(e.target.value)}
             fullWidth
+            inputRef={inputRef}
+            placeholder="e.g., Buy groceries #errands"
             sx={{
+              marginTop: 2,
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
-                  borderColor: getTitleColor(),
+                  borderColor: getTitleColor(timeOffset),
                 },
                 '&:hover fieldset': {
-                  borderColor: getTitleColor(),
+                  borderColor: getTitleColor(timeOffset),
                 },
                 '&.Mui-focused fieldset': {
-                  borderColor: getTitleColor(),
+                  borderColor: getTitleColor(timeOffset),
                 },
               },
               '& .MuiInputLabel-root': {
-                color: getTitleColor(),
+                color: getTitleColor(timeOffset),
               },
               '& .MuiInputLabel-root.Mui-focused': {
-                color: getTitleColor(),
+                color: getTitleColor(timeOffset),
               },
             }}
           />
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose} color="secondary">Cancel</Button>
+        <DialogActions sx={{ justifyContent: 'center', paddingBottom: 3 }}>
+          <Button
+            onClick={handleDialogClose}
+            variant="outlined"
+            color="secondary"
+            sx={{ fontSize: '1rem', padding: '0.5rem 2rem' }}
+          >
+            ❌ Cancel
+          </Button>
           <Button
             onClick={() => {
               handleAddTodo();
               handleDialogClose();
             }}
+            variant="contained"
             color="primary"
+            sx={{ fontSize: '1rem', padding: '0.5rem 2rem', backgroundColor: getTitleColor(timeOffset) }}
           >
-            Add
+            ✅ Add Todo
           </Button>
         </DialogActions>
       </Dialog>
