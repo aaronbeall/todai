@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { TextField, Button, Stack, Card, CardContent, Typography, Box, IconButton, Drawer, List, ListItem, ListItemText, Chip, ListItemIcon, Badge, ListItemButton, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { TextField, Button, Stack, Card, CardContent, Typography, Box, IconButton, Drawer, List, ListItem, ListItemText, Chip, ListItemIcon, Badge, ListItemButton, Dialog, DialogActions, DialogContent, DialogTitle, Slider } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Edit, Archive, Delete, Add } from '@mui/icons-material';
 import { addTodo, getTodos, deleteTodo, getTags, Todo, Tag } from './db';
@@ -15,6 +15,8 @@ function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [timeOffset, setTimeOffset] = useState(0);
+  const [timeDialogOpen, setTimeDialogOpen] = useState(false);
 
   useEffect(() => {
     const fetchTodosAndTags = async () => {
@@ -72,6 +74,21 @@ function App() {
   const handleDialogOpen = () => setDialogOpen(true);
   const handleDialogClose = () => setDialogOpen(false);
 
+  const handleTimeClick = () => setTimeDialogOpen(true);
+  const handleTimeDialogClose = () => setTimeDialogOpen(false);
+
+  const getSimulatedTime = () => {
+    const simulatedDate = new Date();
+    simulatedDate.setHours(simulatedDate.getHours() + timeOffset);
+    return simulatedDate.toLocaleTimeString();
+  };
+
+  const getSimulatedDay = () => {
+    const simulatedDate = new Date();
+    simulatedDate.setHours(simulatedDate.getHours() + timeOffset);
+    return simulatedDate.toLocaleDateString(undefined, { weekday: 'long' });
+  };
+
   const getCurrentDay = () => {
     return new Date().toLocaleDateString(undefined, { weekday: 'long' });
   };
@@ -85,7 +102,7 @@ function App() {
       sx={{
         minHeight: '100vh',
         padding: 2,
-        background: getGradientBackground(),
+        background: getGradientBackground(timeOffset),
         color: 'white',
         position: 'relative',
       }}
@@ -181,26 +198,50 @@ function App() {
           right: 16,
           fontSize: '0.9rem',
           opacity: 0.7,
-          color: getTitleColor(),
+          color: getTitleColor(timeOffset),
+          cursor: 'pointer',
         }}
+        onClick={handleTimeClick}
       >
-        {currentTime}
+        {getSimulatedTime()}
       </Typography>
+
+      <Dialog open={timeDialogOpen} onClose={handleTimeDialogClose}>
+        <DialogTitle>Simulate Time Offset</DialogTitle>
+        <DialogContent>
+          <Slider
+            value={timeOffset}
+            onChange={(e, newValue) => setTimeOffset(newValue)}
+            min={-12}
+            max={12}
+            step={1}
+            marks
+            valueLabelDisplay="on"
+            sx={{
+              color: getTitleColor(timeOffset),
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleTimeDialogClose} color="primary">Close</Button>
+        </DialogActions>
+      </Dialog>
+
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2, mb: 2 }}>
         <Typography
           variant="h3"
           align="center"
-          sx={{ color: getTitleColor() }}
+          sx={{ color: getTitleColor(timeOffset) }}
         >
-          {getCurrentDay()}
+          {getSimulatedDay()}
         </Typography>
         <IconButton
           onClick={handleDialogOpen}
           sx={{
-            backgroundColor: getTitleColor(),
+            backgroundColor: getTitleColor(timeOffset),
             color: 'white',
             '&:hover': {
-              backgroundColor: getTitleColor(),
+              backgroundColor: getTitleColor(timeOffset),
               opacity: 0.9,
             },
           }}
