@@ -5,12 +5,14 @@ export interface Todo {
   text: string;
   completed: boolean;
   tags: string[];
+  due?: Date;
 }
 
 export interface Tag {
   id: number;
   name: string;
   color: string;
+  icon?: string;
 }
 
 interface TodoDBSchema extends DBSchema {

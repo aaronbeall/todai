@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { TextField, Button, Stack, Card, CardContent, Typography, Box, IconButton, Drawer, List, ListItem, ListItemText, Chip, ListItemIcon, Badge, ListItemButton } from '@mui/material';
+import { TextField, Button, Stack, Card, CardContent, Typography, Box, IconButton, Drawer, List, ListItem, ListItemText, Chip, ListItemIcon, Badge, ListItemButton, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Edit, Archive, Delete, Add } from '@mui/icons-material';
 import { addTodo, getTodos, deleteTodo, getTags, Todo, Tag } from './db';
@@ -14,6 +14,7 @@ function App() {
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     const fetchTodosAndTags = async () => {
@@ -34,7 +35,7 @@ function App() {
   const handleAddTodo = async () => {
     if (newTodo.trim()) {
       const tags = Array.from(newTodo.matchAll(/#\w+/g)).map((match) => match[0]);
-      const todo = { text: newTodo, completed: false, tags };
+      const todo = { id: Date.now(), text: newTodo, completed: false, tags }; // Add unique id
       await addTodo(todo);
       setTodos(await getTodos());
       setTags(await getTags());
@@ -67,6 +68,9 @@ function App() {
       setTodos(await getTodos()); // Refresh the todos
     }
   };
+
+  const handleDialogOpen = () => setDialogOpen(true);
+  const handleDialogClose = () => setDialogOpen(false);
 
   const getCurrentDay = () => {
     return new Date().toLocaleDateString(undefined, { weekday: 'long' });
@@ -182,16 +186,32 @@ function App() {
       >
         {currentTime}
       </Typography>
-      <Typography
-        variant="h3"
-        gutterBottom
-        align="center"
-        sx={{ color: getTitleColor() }}
-      >
-        {getCurrentDay()}
-      </Typography>
-      <Stack spacing={2}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2, mb: 2 }}>
+        <Typography
+          variant="h3"
+          align="center"
+          sx={{ color: getTitleColor() }}
+        >
+          {getCurrentDay()}
+        </Typography>
+        <IconButton
+          onClick={handleDialogOpen}
+          sx={{
+            backgroundColor: getTitleColor(),
+            color: 'white',
+            '&:hover': {
+              backgroundColor: getTitleColor(),
+              opacity: 0.9,
+            },
+          }}
+        >
+          <Add />
+        </IconButton>
+      </Box>
+
+      <Dialog open={dialogOpen} onClose={handleDialogClose}>
+        <DialogTitle>Add a New Todo</DialogTitle>
+        <DialogContent>
           <TextField
             variant="outlined"
             label="Add a new todo"
@@ -218,20 +238,22 @@ function App() {
               },
             }}
           />
-          <IconButton
-            onClick={handleAddTodo}
-            sx={{
-              backgroundColor: getTitleColor(),
-              color: 'white',
-              '&:hover': {
-                backgroundColor: getTitleColor(),
-                opacity: 0.9,
-              },
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="secondary">Cancel</Button>
+          <Button
+            onClick={() => {
+              handleAddTodo();
+              handleDialogClose();
             }}
+            color="primary"
           >
-            <Add />
-          </IconButton>
-        </Box>
+            Add
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Stack spacing={2}>
         <Stack spacing={2}>
           {filteredTodos
             .filter((todo) => !todo.completed)
