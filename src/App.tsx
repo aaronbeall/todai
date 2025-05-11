@@ -1,16 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { TextField, Button, Stack, Card, CardContent, Typography, Box, IconButton, Drawer, List, ListItem, ListItemText, Chip, ListItemIcon, Badge, ListItemButton, Dialog, DialogActions, DialogContent, DialogTitle, Slider, Checkbox } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Edit, Archive, Delete, Add, ViewList, MoreHoriz } from '@mui/icons-material';
+import { Add, MoreHoriz } from '@mui/icons-material';
 import { addTodo, getTodos, getTags, Todo, Tag } from './db';
 import { getGradientBackground, getTitleColor, getTimeOfDayEmoji } from './theme';
 import './App.css';
+import AddTodoDialog from './components/AddTodoDialog';
 
 function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [newTodo, setNewTodo] = useState('');
-  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -26,12 +26,6 @@ function App() {
       setTags(tagsFromDB);
     };
     fetchTodosAndTags();
-
-    const timer = setInterval(() => {
-      setCurrentTime(new Date().toLocaleTimeString());
-    }, 1000);
-
-    return () => clearInterval(timer);
   }, []);
 
   useEffect(() => {
@@ -256,80 +250,15 @@ function App() {
         </IconButton>
       </Box>
 
-      <Dialog
+      <AddTodoDialog
         open={dialogOpen}
         onClose={handleDialogClose}
-        maxWidth="sm"
-        fullWidth
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            if (newTodo.trim()) {
-              handleAddTodo();
-              setTimeout(handleDialogClose);
-            }
-          } else if (e.key === 'Escape') {
-            handleDialogClose();
-          }
-        }}
-      >
-        <DialogTitle sx={{ textAlign: 'center', fontSize: '2rem', color: getTitleColor(timeOffset) }}>
-          🎉 Add a New Todo 📝
-        </DialogTitle>
-        <DialogContent sx={{ textAlign: 'center', padding: 4 }}>
-          <Typography variant="h6" gutterBottom sx={{ color: getTitleColor(timeOffset) }}>
-            What do you want to accomplish today? 🌟
-          </Typography>
-          <TextField
-            variant="outlined"
-            value={newTodo}
-            onChange={(e) => setNewTodo(e.target.value)}
-            fullWidth
-            inputRef={inputRef}
-            placeholder="e.g., Buy groceries #errands"
-            sx={{
-              marginTop: 2,
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  borderColor: getTitleColor(timeOffset),
-                },
-                '&:hover fieldset': {
-                  borderColor: getTitleColor(timeOffset),
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: getTitleColor(timeOffset),
-                },
-              },
-              '& .MuiInputLabel-root': {
-                color: getTitleColor(timeOffset),
-              },
-              '& .MuiInputLabel-root.Mui-focused': {
-                color: getTitleColor(timeOffset),
-              },
-            }}
-          />
-        </DialogContent>
-        <DialogActions sx={{ justifyContent: 'center', paddingBottom: 3 }}>
-          <Button
-            onClick={handleDialogClose}
-            variant="outlined"
-            color="secondary"
-            sx={{ fontSize: '1rem', padding: '0.5rem 2rem' }}
-          >
-            ❌ Cancel
-          </Button>
-          <Button
-            onClick={() => {
-              handleAddTodo();
-              handleDialogClose();
-            }}
-            variant="contained"
-            color="primary"
-            sx={{ fontSize: '1rem', padding: '0.5rem 2rem', backgroundColor: getTitleColor(timeOffset) }}
-          >
-            ✅ Add Todo
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onAddTodo={handleAddTodo}
+        newTodo={newTodo}
+        setNewTodo={setNewTodo}
+        timeOffset={timeOffset}
+        setTimeOffset={setTimeOffset}
+      />
 
       <Box sx={{ padding: 2, backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2, boxShadow: 1 }}>
         <Stack spacing={1}>
