@@ -20,7 +20,6 @@ export interface Todo {
   dueAt?: number;
   expiredAt?: number;
   createdAt: number;
-  touchedAt: number;
   completedAt?: number;
   activity: TodoActivity[];
   parent?: number;
@@ -31,6 +30,8 @@ export interface Tag {
   name: string;
   color: string;
   icon?: string;
+  createdAt: number;
+  lastUsedAt?: number;
 }
 
 interface TodoDBSchema extends DBSchema {
@@ -78,7 +79,7 @@ export const addTodo = async (todo: Todo) => {
   const existingTagNames = existingTags.map((tag) => tag.name.toLowerCase());
   for (const tag of todo.tags) {
     if (!existingTagNames.includes(tag.toLowerCase())) {
-      await addTag({ id: Date.now(), name: tag, color: getRandomColor() }); // Assign random color
+      await addTag({ id: Date.now(), name: tag, color: getRandomColor(), createdAt: Date.now() }); // Assign random color
     }
   }
 

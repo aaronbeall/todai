@@ -49,7 +49,6 @@ function App() {
         tags, 
         status: 'active',
         createdAt: Date.now(), 
-        touchedAt: Date.now(), 
         priority: 'normal', 
         activity: [],
       };
@@ -256,8 +255,7 @@ function App() {
         onAddTodo={handleAddTodo}
         newTodo={newTodo}
         setNewTodo={setNewTodo}
-        timeOffset={timeOffset}
-        setTimeOffset={setTimeOffset}
+        tags={tags} // Pass tags from App.tsx to AddTodoDialog
       />
 
       <Box sx={{ padding: 2, backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2, boxShadow: 1 }}>
