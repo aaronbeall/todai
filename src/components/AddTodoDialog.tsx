@@ -7,9 +7,7 @@ import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
 interface AddTodoDialogProps {
   open: boolean;
   onClose: () => void;
-  onAddTodo: () => void;
-  newTodo: string;
-  setNewTodo: (value: string) => void;
+  onAddTodo: (newTodo: string) => void; // Update onAddTodo to accept newTodo text
   timeOffset?: number; // Make timeOffset optional in AddTodoDialogProps
   tags: Tag[]; // Add tags prop to pass available tags
 }
@@ -18,11 +16,10 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
   open,
   onClose,
   onAddTodo,
-  newTodo,
-  setNewTodo,
   timeOffset,
   tags, // Destructure tags prop
 }) => {
+  const [newTodo, setNewTodo] = useState<string>(""); // Move newTodo state inside AddTodoDialog
   const [tagSuggestions, setTagSuggestions] = useState<{ name: string; highlight: string; isNew?: boolean }[]>([]);
   const inputRef = React.useRef<HTMLElement | null>(null);
 
@@ -105,6 +102,14 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
     setTagSuggestions([]);
   };
 
+  const handleAddTodo = () => {
+    if (newTodo.trim()) {
+      onAddTodo(newTodo); // Pass the newTodo text to the parent component
+      setNewTodo(""); // Clear the input after adding
+      onClose();
+    }
+  };
+
   return (
     <Dialog
       open={open}
@@ -112,14 +117,16 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
       maxWidth="sm"
       fullWidth
       disableRestoreFocus
-      onKeyDown={(e: React.KeyboardEvent) => { // Add explicit type for the event parameter
+      onKeyDown={(e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
           if (newTodo.trim()) {
-            onAddTodo();
-            setTimeout(onClose);
+            handleAddTodo();
           }
         } else if (e.key === 'Escape') {
           onClose();
+        } else if (e.key === 'Tab' && tagSuggestions.length > 0) {
+          e.preventDefault(); // Prevent default tab behavior
+          handleTagSelect(tagSuggestions[0].name); // Automatically select the first suggested tag
         }
       }}
     >
@@ -145,7 +152,6 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
               border: '1px solid #ccc',
               borderRadius: '4px',
               padding: '8px',
-              minHeight: '40px',
               outline: 'none',
               whiteSpace: 'pre-wrap',
               wordWrap: 'break-word',
@@ -243,10 +249,7 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
           ❌ Cancel
         </Button>
         <Button
-          onClick={() => {
-            onAddTodo();
-            onClose();
-          }}
+          onClick={handleAddTodo} // Use the new handleAddTodo function
           variant="contained"
           color="primary"
           sx={{ fontSize: '1rem', padding: '0.5rem 2rem', backgroundColor: getTitleColor(timeOffset) }}

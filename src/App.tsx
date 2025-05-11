@@ -10,7 +10,6 @@ import AddTodoDialog from './components/AddTodoDialog';
 function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
-  const [newTodo, setNewTodo] = useState('');
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -40,22 +39,21 @@ function App() {
     }
   }, [dialogOpen]);
 
-  const handleAddTodo = async () => {
+  const handleAddTodo = async (newTodo: string) => {
     if (newTodo.trim()) {
       const tags = Array.from(newTodo.matchAll(/#\w+/g)).map((match) => match[0]);
-      const todo: Todo = { 
-        id: Date.now(), 
-        text: newTodo, 
-        tags, 
+      const todo: Todo = {
+        id: Date.now(),
+        text: newTodo,
+        tags,
         status: 'active',
-        createdAt: Date.now(), 
-        priority: 'normal', 
+        createdAt: Date.now(),
+        priority: 'normal',
         activity: [],
       };
       await addTodo(todo);
       setTodos(await getTodos());
       setTags(await getTags());
-      setNewTodo('');
     }
   };
 
@@ -252,9 +250,7 @@ function App() {
       <AddTodoDialog
         open={dialogOpen}
         onClose={handleDialogClose}
-        onAddTodo={handleAddTodo}
-        newTodo={newTodo}
-        setNewTodo={setNewTodo}
+        onAddTodo={handleAddTodo} // Pass the updated handler
         tags={tags} // Pass tags from App.tsx to AddTodoDialog
       />
 
