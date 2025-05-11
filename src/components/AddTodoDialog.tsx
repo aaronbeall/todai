@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Typography, Slider } from '@mui/material';
 import { getTitleColor } from '../theme';
 
@@ -29,6 +29,7 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
       onClose={onClose}
       maxWidth="sm"
       fullWidth
+      disableRestoreFocus
       onKeyDown={(e) => {
         if (e.key === 'Enter') {
           if (newTodo.trim()) {
@@ -53,6 +54,7 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
           onChange={(e) => setNewTodo(e.target.value)}
           fullWidth
           inputRef={inputRef}
+          autoFocus
           placeholder="e.g., Buy groceries #errands"
           sx={{
             marginTop: 2,

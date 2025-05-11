@@ -295,6 +295,7 @@ function App() {
                   }}
                 />
                 <Typography
+                  component="div" // Render Typography as a <div> instead of a <p>
                   sx={{
                     textDecoration: todo.status === 'completed' ? 'line-through' : 'none',
                     color: 'white',
