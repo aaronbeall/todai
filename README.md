@@ -3,15 +3,15 @@ Make Today Count With AI! 🎉
 
 ## Designed for ADHD 🧠
 
-Designing for ADHD involves focusing on executive **function support**, **minimal distractions**, and **motivational elements**. Concepts are designed with a focus on **usability**, **psychology-backed strategies**, and **ADHD-friendly design principles**.
+Designing for ADHD involves focusing on **executive function support**, **minimal distractions**, and **motivational elements**. Concepts are designed with a focus on **usability**, **psychology-backed strategies**, and **ADHD-friendly design principles**.
 
 # Features ✨
 
 - Focused on today
 - Items can be easily entered, categoried with # tags, and assigned with @ mentions
-- Age of an item is tracked
+- Age of an item is tracked and used to automatically prioritize and give feedback
 - Each day, you're prompted on each outstanding item
-- Items are automatically grouped
+- Items are automatically grouped and broken up
 
 # Brainstorming
 
