@@ -340,16 +340,30 @@ function App() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: 1,
-                borderRadius: 1,
-                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                paddingY: 0.5,
               }}
             >
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Checkbox
                   checked={todo.status === 'completed'}
                   onChange={() => handleToggleComplete(todo.id, todo.status !== 'completed')}
-                  sx={{ color: 'white' }}
+                  icon={<span style={{
+                    display: 'inline-block',
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    border: '2px solid white',
+                  }} />}
+                  checkedIcon={<span style={{
+                    display: 'inline-block',
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    backgroundColor: 'white',
+                  }} />}
+                  sx={{
+                    padding: 0,
+                  }}
                 />
                 <Typography
                   sx={{
