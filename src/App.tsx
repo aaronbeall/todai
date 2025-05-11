@@ -3,7 +3,7 @@ import { TextField, Button, Stack, Card, CardContent, Typography, Box, IconButto
 import MenuIcon from '@mui/icons-material/Menu';
 import { Edit, Archive, Delete, Add, ViewList, MoreHoriz } from '@mui/icons-material';
 import { addTodo, getTodos, getTags, Todo, Tag } from './db';
-import { getGradientBackground, getTitleColor } from './theme';
+import { getGradientBackground, getTitleColor, getTimeOfDayEmoji } from './theme';
 import './App.css';
 
 function App() {
@@ -234,9 +234,12 @@ function App() {
         <Typography
           variant="h3"
           align="center"
-          sx={{ color: getTitleColor(timeOffset) }}
+          sx={{ color: getTitleColor(timeOffset), display: 'flex', alignItems: 'center', gap: 1 }}
         >
           {getSimulatedDay()}
+          <span role="img" aria-label="time-of-day">
+            {getTimeOfDayEmoji(new Date().getHours() + timeOffset)}
+          </span>
         </Typography>
         <IconButton
           onClick={handleDialogOpen}
