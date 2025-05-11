@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { TextField, Button, Stack, Card, CardContent, Typography, Box, IconButton, Drawer, List, ListItem, ListItemText, Chip, ListItemIcon, Badge, ListItemButton, Dialog, DialogActions, DialogContent, DialogTitle, Slider } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Edit, Archive, Delete, Add } from '@mui/icons-material';
+import { Edit, Archive, Delete, Add, ViewList } from '@mui/icons-material';
 import { addTodo, getTodos, deleteTodo, getTags, Todo, Tag } from './db';
 import { getGradientBackground, getTitleColor } from './theme';
 import './App.css';
@@ -160,7 +160,10 @@ function App() {
                 },
               }}
             >
-              <ListItemText primary="All Todos" />
+              <ListItemIcon>
+                <span role="img" aria-label="all-items" style={{ fontSize: '1.5rem', color: selectedTag === null ? 'white' : 'inherit' }}>🌟</span>
+              </ListItemIcon>
+              <ListItemText primary="All" />
             </ListItemButton>
             {tags.map((tag) => {
               const incompleteCount = todos.filter(
