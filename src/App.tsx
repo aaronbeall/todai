@@ -1,11 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { TextField, Button, Stack, Card, CardContent, Typography, Box, IconButton, Drawer, List, ListItem, ListItemText, Chip, ListItemIcon, Badge, ListItemButton, Dialog, DialogActions, DialogContent, DialogTitle, Slider } from '@mui/material';
+import { TextField, Button, Stack, Card, CardContent, Typography, Box, IconButton, Drawer, List, ListItem, ListItemText, Chip, ListItemIcon, Badge, ListItemButton, Dialog, DialogActions, DialogContent, DialogTitle, Slider, Checkbox } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Edit, Archive, Delete, Add, ViewList } from '@mui/icons-material';
-import { addTodo, getTodos, deleteTodo, getTags, Todo, Tag } from './db';
+import { Edit, Archive, Delete, Add, ViewList, MoreHoriz } from '@mui/icons-material';
+import { addTodo, getTodos, getTags, Todo, Tag } from './db';
 import { getGradientBackground, getTitleColor } from './theme';
 import './App.css';
-import TodoCard from './components/TodoCard';
 
 function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -57,7 +56,7 @@ function App() {
         status: 'active',
         createdAt: Date.now(), 
         touchedAt: Date.now(), 
-        priority: 'now', 
+        priority: 'normal', 
         activity: [],
       };
       await addTodo(todo);
@@ -65,23 +64,6 @@ function App() {
       setTags(await getTags());
       setNewTodo('');
     }
-  };
-
-  const handleEditTodo = (id: number) => {
-    console.log(`Edit todo with id: ${id}`);
-  };
-
-  const handleArchiveTodo = (id: number) => {
-    console.log(`Archive todo with id: ${id}`);
-  };
-
-  const handleDeleteTodo = async (id: number) => {
-    await deleteTodo(id);
-    setTodos(await getTodos());
-  };
-
-  const handleTagClick = (tagName: string) => {
-    setSelectedTag(tagName);
   };
 
   const handleToggleComplete = async (id: number, completed: boolean) => {
@@ -346,52 +328,55 @@ function App() {
         </DialogActions>
       </Dialog>
 
-      <Stack spacing={2}>
-        <Stack spacing={2}>
-          {filteredTodos
-            .filter((todo) => todo.status !== 'completed')
-            .map((todo) => (
-              <TodoCard
-                key={todo.id}
-                id={todo.id}
-                text={todo.text}
-                tags={todo.tags}
-                completed={todo.status === 'completed'}
-                onEdit={handleEditTodo}
-                onArchive={handleArchiveTodo}
-                onDelete={handleDeleteTodo}
-                onToggleComplete={handleToggleComplete}
-                onTagClick={handleTagClick}
-                tagData={tags}
-              />
-            ))}
+      <Box sx={{ padding: 2, backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2, boxShadow: 1 }}>
+        <Stack spacing={1}>
+          {filteredTodos.map((todo) => (
+            <Box
+              key={todo.id}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: 1,
+                borderRadius: 1,
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Checkbox
+                  checked={todo.status === 'completed'}
+                  onChange={() => handleToggleComplete(todo.id, todo.status !== 'completed')}
+                  sx={{ color: 'white' }}
+                />
+                <Typography
+                  sx={{
+                    textDecoration: todo.status === 'completed' ? 'line-through' : 'none',
+                    color: 'white',
+                  }}
+                >
+                  {todo.text.split(/(#[^\s]+)/g).map((part, index) => {
+                    if (part.startsWith('#')) {
+                      const tagColor = tags.find((tag) => tag.name === part)?.color || 'rgba(255, 255, 255, 0.3)';
+                      return (
+                        <Chip
+                          key={index}
+                          label={part}
+                          size="small"
+                          sx={{ backgroundColor: tagColor, color: 'white', marginLeft: 0.5, marginRight: 0.5 }}
+                        />
+                      );
+                    }
+                    return part;
+                  })}
+                </Typography>
+              </Box>
+              <IconButton onClick={() => console.log('Options menu clicked')} sx={{ color: 'white' }}>
+                <MoreHoriz />
+              </IconButton>
+            </Box>
+          ))}
         </Stack>
-        <Typography
-          variant="h5"
-          sx={{ color: getTitleColor() }}
-        >
-          Completed
-        </Typography>
-        <Stack spacing={2}>
-          {filteredTodos
-            .filter((todo) => todo.status === 'completed')
-            .map((todo) => (
-              <TodoCard
-                key={todo.id}
-                id={todo.id}
-                text={todo.text}
-                tags={todo.tags}
-                completed={todo.status === 'completed'}
-                onEdit={handleEditTodo}
-                onArchive={handleArchiveTodo}
-                onDelete={handleDeleteTodo}
-                onToggleComplete={handleToggleComplete}
-                onTagClick={handleTagClick}
-                tagData={tags}
-              />
-            ))}
-        </Stack>
-      </Stack>
+      </Box>
     </Box>
   );
 }
