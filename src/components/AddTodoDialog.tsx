@@ -1,7 +1,8 @@
-import React, { useRef, useState } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Typography, Box } from '@mui/material';
+import React, { useState } from 'react';
+import { Dialog, DialogActions, DialogContent, DialogTitle, Button, Typography, Box } from '@mui/material'; // Fix incorrect import
 import { getTitleColor } from '../theme';
 import { Tag } from '../db';
+import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
 
 interface AddTodoDialogProps {
   open: boolean;
@@ -22,14 +23,15 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
   timeOffset,
   tags, // Destructure tags prop
 }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [tagSuggestions, setTagSuggestions] = useState<{ name: string; highlight: string }[]>([]);
+  const [tagSuggestions, setTagSuggestions] = useState<{ name: string; highlight: string; isNew?: boolean }[]>([]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setNewTodo(value);
+  const handleContentEditableChange = (e: ContentEditableEvent) => {
+    const div = document.createElement('div');
+    div.innerHTML = e.target.value; // Parse the HTML content
+    const textContent = div.textContent || ''; // Extract plain text
+    setNewTodo(textContent);
 
-    const match = value.match(/#(\w*)$/); // Match the last tag being typed
+    const match = textContent.match(/#(\w*)$/); // Match the last tag being typed
     if (match) {
       const query = match[1].toLowerCase();
       const suggestions = tags
@@ -42,11 +44,50 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
         .map((tag) => ({
           name: tag.name,
           highlight: query,
+          isNew: false, // Default to not new
         }));
+
+      // Add the new tag suggestion at the end of the list
+      if (!tags.some((tag) => tag.name.toLowerCase() === `#${query}`) && query.trim() !== '') {
+        suggestions.push({
+          name: `#${query}`,
+          highlight: query,
+          isNew: true, // Mark as new
+        });
+      }
+
       setTagSuggestions(suggestions);
     } else {
       setTagSuggestions([]);
     }
+  };
+
+  const formatTagsInContent = (content: string) => {
+    const div = document.createElement('div');
+    content.split(/(#[^\s]+)/).forEach((part) => {
+      const span = document.createElement('span');
+      const matchingTag = part.startsWith('#') ? tags.find((tag) => tag.name === part) : null;
+
+      if (matchingTag) {
+        span.style.backgroundColor = matchingTag.color;
+        span.style.color = 'white';
+        span.style.borderRadius = '9999px';
+        span.style.padding = '0 4px';
+        span.textContent = part;
+      } else if (part.startsWith('#')) {
+        span.style.border = '1px dashed gray';
+        span.style.color = 'gray';
+        span.style.borderRadius = '9999px';
+        span.style.padding = '0 4px';
+        span.textContent = part;
+      } else {
+        span.textContent = part;
+      }
+
+      div.appendChild(span);
+    });
+
+    return div.innerHTML;
   };
 
   const handleTagSelect = (tag: string) => {
@@ -62,7 +103,7 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
       maxWidth="sm"
       fullWidth
       disableRestoreFocus
-      onKeyDown={(e) => {
+      onKeyDown={(e: React.KeyboardEvent) => { // Add explicit type for the event parameter
         if (e.key === 'Enter') {
           if (newTodo.trim()) {
             onAddTodo();
@@ -85,86 +126,22 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
             position: 'relative',
           }}
         >
-          <TextField
-            variant="outlined"
-            value={newTodo}
-            onChange={handleInputChange}
-            fullWidth
-            inputRef={inputRef}
-            autoFocus
-            placeholder="e.g., Buy groceries #errands"
-            sx={{
-              marginTop: 2,
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  borderColor: getTitleColor(timeOffset),
-                },
-                '&:hover fieldset': {
-                  borderColor: getTitleColor(timeOffset),
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: getTitleColor(timeOffset),
-                },
-              },
-              '& .MuiInputLabel-root': {
-                color: getTitleColor(timeOffset),
-              },
-              '& .MuiInputLabel-root.Mui-focused': {
-                color: getTitleColor(timeOffset),
-              },
+          <ContentEditable
+            html={formatTagsInContent(newTodo)}
+            onChange={handleContentEditableChange}
+            tagName="div"
+            style={{
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              padding: '8px',
+              minHeight: '40px',
+              outline: 'none',
+              whiteSpace: 'pre-wrap',
+              wordWrap: 'break-word',
+              textAlign: 'left', // Align text to the left
+              fontSize: '1.2rem', // Increase font size
             }}
           />
-          <Box
-            sx={{
-              position: 'absolute',
-              top: '30px',
-              left: '5px',
-              width: '100%',
-              pointerEvents: 'none',
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            {newTodo.split(/(#[^\s]+)/).map((part, index) => {
-              if (!part) return null; // Skip empty parts
-              const matchingTag = part.startsWith('#') ? tags.find((tag) => tag.name === part) : null;
-              return (
-                <Box
-                  key={index}
-                  sx={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    paddingX: 1,
-                    paddingY: 0.5,
-                    backgroundColor: matchingTag ? matchingTag.color : 'transparent',
-                    border: part.startsWith('#') && !matchingTag ? '1px dashed gray' : 'none',
-                    borderRadius: '9999px',
-                    color: matchingTag ? 'white' : 'transparent',
-                    marginRight: -1.5,
-                    position: 'relative',
-                  }}
-                >
-                  {part}
-                  {!matchingTag && part.startsWith('#') && (
-                    <Box
-                      sx={{
-                        position: 'absolute',
-                        top: '-10px',
-                        right: '-10px',
-                        backgroundColor: 'red',
-                        color: 'white',
-                        fontSize: '0.6rem',
-                        padding: '0 4px',
-                        borderRadius: '4px',
-                      }}
-                    >
-                      new
-                    </Box>
-                  )}
-                </Box>
-              );
-            })}
-          </Box>
         </Box>
         {tagSuggestions.length > 0 && (
           <Box
@@ -179,7 +156,7 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
               padding: 1,
             }}
           >
-            {tagSuggestions.map(({ name, highlight }) => (
+            {tagSuggestions.map(({ name, highlight, isNew }) => (
               <Box
                 key={name}
                 onClick={() => handleTagSelect(name)}
@@ -191,10 +168,12 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
                   backgroundColor: tags.find((t) => t.name === name)?.color || '#f0f0f0', // Use tag background color
                   borderRadius: '9999px', // Pill-shaped
                   cursor: 'pointer',
-                  color: 'white', // White text
+                  color: isNew ? 'black' : 'white', // Black text for new tags
+                  border: isNew ? '1px dotted black' : 'none', // Dotted outline for new tags
                   '&:hover': {
                     backgroundColor: '#e0e0e0',
                   },
+                  position: 'relative',
                 }}
               >
                 {name.split(new RegExp(`(${highlight})`, 'i')).map((part, index) => (
@@ -209,6 +188,24 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
                     {part}
                   </span>
                 ))}
+                {isNew && (
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      top: '-10px',
+                      right: '-10px',
+                      backgroundColor: 'red',
+                      color: 'white',
+                      fontSize: '0.6rem',
+                      padding: '0 4px',
+                      borderRadius: '4px',
+                      userSelect: 'none', // Prevent editing
+                      pointerEvents: 'none', // Prevent interaction
+                    }}
+                  >
+                    new
+                  </Box>
+                )}
               </Box>
             ))}
           </Box>
