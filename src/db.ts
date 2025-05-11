@@ -23,6 +23,7 @@ export interface Todo {
   completedAt?: number;
   activity: TodoActivity[];
   parent?: number;
+  description?: string;
 }
 
 export interface Tag {
@@ -32,6 +33,7 @@ export interface Tag {
   icon?: string;
   createdAt: number;
   lastUsedAt?: number;
+  description?: string;
 }
 
 interface TodoDBSchema extends DBSchema {
