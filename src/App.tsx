@@ -50,7 +50,16 @@ function App() {
   const handleAddTodo = async () => {
     if (newTodo.trim()) {
       const tags = Array.from(newTodo.matchAll(/#\w+/g)).map((match) => match[0]);
-      const todo = { id: Date.now(), text: newTodo, completed: false, tags }; // Add unique id
+      const todo: Todo = { 
+        id: Date.now(), 
+        text: newTodo, 
+        tags, 
+        status: 'active',
+        createdAt: Date.now(), 
+        touchedAt: Date.now(), 
+        priority: 'now', 
+        activity: [],
+      };
       await addTodo(todo);
       setTodos(await getTodos());
       setTags(await getTags());
@@ -155,7 +164,7 @@ function App() {
             </ListItemButton>
             {tags.map((tag) => {
               const incompleteCount = todos.filter(
-                (todo) => !todo.completed && todo.tags.some((t) => t.toLowerCase() === tag.name.toLowerCase())
+                (todo) => todo.status !== 'completed' && todo.tags.some((t) => t.toLowerCase() === tag.name.toLowerCase())
               ).length;
 
               return (
@@ -337,14 +346,14 @@ function App() {
       <Stack spacing={2}>
         <Stack spacing={2}>
           {filteredTodos
-            .filter((todo) => !todo.completed)
+            .filter((todo) => todo.status !== 'completed')
             .map((todo) => (
               <TodoCard
                 key={todo.id}
                 id={todo.id}
                 text={todo.text}
                 tags={todo.tags}
-                completed={todo.completed}
+                completed={todo.status === 'completed'}
                 onEdit={handleEditTodo}
                 onArchive={handleArchiveTodo}
                 onDelete={handleDeleteTodo}
@@ -362,14 +371,14 @@ function App() {
         </Typography>
         <Stack spacing={2}>
           {filteredTodos
-            .filter((todo) => todo.completed)
+            .filter((todo) => todo.status === 'completed')
             .map((todo) => (
               <TodoCard
                 key={todo.id}
                 id={todo.id}
                 text={todo.text}
                 tags={todo.tags}
-                completed={todo.completed}
+                completed={todo.status === 'completed'}
                 onEdit={handleEditTodo}
                 onArchive={handleArchiveTodo}
                 onDelete={handleDeleteTodo}

@@ -1,11 +1,26 @@
 import { openDB, DBSchema } from 'idb';
 
+export type TodoPriority = 'now' | 'next' | 'later';
+
+export type TodoStatus = 'active' | 'completed' | 'deleted' | 'archived';
+
+export type TodoActivity = {
+  timestamp: number;
+  action: 'created' | 'updated' | 'prioritized' | 'rescheduled' | 'deleted' | 'completed' | 'archived';
+  priority?: TodoPriority;
+}
+
 export interface Todo {
   id: number;
   text: string;
-  completed: boolean;
+  status: TodoStatus;
+  priority: TodoPriority;
   tags: string[];
-  due?: Date;
+  dueAt?: number;
+  createdAt: number;
+  touchedAt: number;
+  completedAt?: number;
+  activity: TodoActivity[];
 }
 
 export interface Tag {
