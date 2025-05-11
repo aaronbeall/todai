@@ -143,6 +143,17 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
             }}
           />
         </Box>
+        <Box
+          sx={{
+            marginTop: 1,
+            display: tagSuggestions.length > 0 ? 'none' : 'block', // Hide when there are tag suggestions
+            color: 'gray',
+            fontStyle: 'italic',
+            fontSize: '0.9rem',
+          }}
+        >
+          Example: "Finish the #project and review the #code"
+        </Box>
         {tagSuggestions.length > 0 && (
           <Box
             sx={{
