@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button, Typography, Box } from '@mui/material'; // Fix incorrect import
 import { getTitleColor } from '../theme';
 import { Tag } from '../db';
@@ -24,6 +24,15 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
   tags, // Destructure tags prop
 }) => {
   const [tagSuggestions, setTagSuggestions] = useState<{ name: string; highlight: string; isNew?: boolean }[]>([]);
+  const inputRef = React.useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (open) {
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0); // Delay focus to ensure the element is rendered
+    }
+  }, [open]);
 
   const handleContentEditableChange = (e: ContentEditableEvent) => {
     const div = document.createElement('div');
@@ -127,6 +136,8 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
           }}
         >
           <ContentEditable
+            innerRef={(ref: HTMLElement | null) => (inputRef.current = ref)} // Attach ref to the ContentEditable with explicit type
+            autoFocus // Automatically focus the input on open
             html={formatTagsInContent(newTodo)}
             onChange={handleContentEditableChange}
             tagName="div"
