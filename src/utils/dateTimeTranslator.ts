@@ -186,3 +186,18 @@ export const determineDateTimeType = (timestamp: number): DateTimeType => {
 
   return 'dateTime'; // Default case: Date with time
 };
+
+export const formatDate = (date: number): string => {
+  const dateTimeType = determineDateTimeType(date);
+  const dateObj = new Date(date);
+
+  switch (dateTimeType) {
+    case 'time':
+      return format(dateObj, 'hh:mm a'); // Format as time (e.g., 09:00 AM)
+    case 'date':
+      return format(dateObj, 'EEEE, MMMM d, yyyy'); // Format as day name, date (e.g., Monday, January 1, 2025)
+    case 'dateTime':
+    default:
+      return format(dateObj, 'EEEE, MMMM d, yyyy hh:mm a'); // Format as day name, date, and time (e.g., Monday, January 1, 2025 09:00 AM)
+  }
+};

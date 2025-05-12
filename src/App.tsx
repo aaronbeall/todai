@@ -6,11 +6,12 @@ import { addTodo, getTodos, getTags, Todo, Tag } from './db';
 import { getGradientBackground, getTitleColor, getTimeOfDayEmoji } from './theme';
 import './App.css';
 import AddTodoDialog from './components/AddTodoDialog';
-import { formatRelativeTime, splitDateAndTime } from './utils/dateTimeTranslator'; // Import relative time formatter
+import { formatRelativeTime, splitDateAndTime, formatDate } from './utils/dateTimeTranslator'; // Import relative time formatter and formatDate function
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'; // Import Material-UI calendar icon
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Import the Material-UI CheckCircle icon
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'; // Import Material-UI RadioButtonUnchecked icon
 import { SideDrawer } from './components/SideDrawer';
+import Tooltip from '@mui/material/Tooltip'; // Import Tooltip from Material-UI
 
 function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -264,32 +265,34 @@ const TodoListItem = ({
           return <span key={index}>{part}</span>;
         })}
         {todo.date && (
-          <Box
-            sx={{
-              display: 'inline-flex',
-              alignItems: 'baseline',
-              border: '1px solid rgba(255, 255, 255, 0.5)',
-              borderRadius: '9999px',
-              padding: '2px 8px',
-              marginLeft: 1,
-              color: 'rgba(255, 255, 255, 0.7)',
-            }}
-          >
-            <CalendarTodayIcon
+          <Tooltip title={todo.date != null ? formatDate(todo.date) : ''} arrow enterTouchDelay={0}>
+            <Box
               sx={{
-                fontSize: '1rem',
-                marginRight: '4px',
-                color: 'inherit',
-                alignSelf: 'center',
+                display: 'inline-flex',
+                alignItems: 'baseline',
+                border: '1px solid rgba(255, 255, 255, 0.5)',
+                borderRadius: '9999px',
+                padding: '2px 8px',
+                marginLeft: 1,
+                color: 'rgba(255, 255, 255, 0.7)',
               }}
-            />
-            <Typography
-              variant="caption"
-              sx={{ color: 'inherit' }}
             >
-              {todo.date != null && formatRelativeTime(todo.date)}
-            </Typography>
-          </Box>
+              <CalendarTodayIcon
+                sx={{
+                  fontSize: '1rem',
+                  marginRight: '4px',
+                  color: 'inherit',
+                  alignSelf: 'center',
+                }}
+              />
+              <Typography
+                variant="caption"
+                sx={{ color: 'inherit' }}
+              >
+                {todo.date != null && formatRelativeTime(todo.date)}
+              </Typography>
+            </Box>
+          </Tooltip>
         )}
       </Typography>
     </Box>
