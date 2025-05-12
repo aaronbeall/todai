@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogTitle, Button, Typography, Box } from '@mui/material'; // Fix incorrect import
+import { Dialog, DialogActions, DialogContent, DialogTitle, Button, Typography, Box, IconButton, TextField } from '@mui/material'; // Removed unused Grid import
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import DeleteIcon from '@mui/icons-material/Delete'; // Replace AccessTimeIcon with DeleteIcon
 import { getTitleColor } from '../theme';
 import { Tag } from '../db';
 import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
 
+// Removed unused import of DateTime
+
 interface AddTodoDialogProps {
   open: boolean;
   onClose: () => void;
-  onAddTodo: (newTodo: string) => void; // Update onAddTodo to accept newTodo text
+  onAddTodo: (newTodo: { text: string; date: number | null }) => void; // Update onAddTodo to accept an object with text and date
   timeOffset?: number; // Make timeOffset optional in AddTodoDialogProps
   tags: Tag[]; // Add tags prop to pass available tags
 }
@@ -21,15 +25,28 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
 }) => {
   const [newTodo, setNewTodo] = useState<string>(""); // Move newTodo state inside AddTodoDialog
   const [tagSuggestions, setTagSuggestions] = useState<{ name: string; highlight: string; isNew?: boolean }[]>([]);
+  const [showDateTimePicker, setShowDateTimePicker] = useState(false); // State to toggle date-time picker
+  const [selectedDate, setSelectedDate] = useState<number | null>(null); // State for selected date
+  const [selectedTime, setSelectedTime] = useState<number | null>(null); // State for selected time
   const inputRef = React.useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (open) {
+      setSelectedDate(null); // Reset the selected date when the dialog opens
+      setSelectedTime(null); // Reset the selected time when the dialog opens
+      setShowDateTimePicker(false); // Ensure the date-time picker is hidden when the dialog opens
       setTimeout(() => {
         inputRef.current?.focus();
       }, 0); // Delay focus to ensure the element is rendered
     }
   }, [open]);
+
+  useEffect(() => {
+    if (!showDateTimePicker) {
+      setSelectedDate(null); // Reset the selected date when the picker is hidden
+      setSelectedTime(null); // Reset the selected time when the picker is hidden
+    }
+  }, [showDateTimePicker]);
 
   const handleContentEditableChange = (e: ContentEditableEvent) => {
     const div = document.createElement('div');
@@ -104,11 +121,40 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
 
   const handleAddTodo = () => {
     if (newTodo.trim()) {
-      onAddTodo(newTodo); // Pass the newTodo text to the parent component
+      const timestamp = (() => {
+        if (selectedDate && selectedTime) {
+          return selectedDate + selectedTime * 60 * 1000;
+        } else if (selectedDate) {
+          return selectedDate;
+        } else if (selectedTime) {
+          return selectedTime * 60 * 1000;
+        } else {
+          return null;
+        }
+      })();
+
+      onAddTodo({ text: newTodo, date: timestamp });
       setNewTodo(""); // Clear the input after adding
+      setSelectedDate(null); // Reset the date picker
+      setSelectedTime(null); // Reset the time picker
       onClose();
     }
   };
+
+  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const date = new Date(event.target.value).getTime();
+    setSelectedDate(date);
+  };
+
+  const handleTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const [hours, minutes] = event.target.value.split(":").map(Number);
+    const time = hours * 60 + minutes; // Convert to minutes since midnight
+    setSelectedTime(time);
+  };
+
+  const getInputStyle = (value: number | null) => ({
+    opacity: value === null ? 0.5 : 1, // Fade out if value is null
+  });
 
   return (
     <Dialog
@@ -143,12 +189,13 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
           }}
         >
           <ContentEditable
-            innerRef={(ref: HTMLElement | null) => (inputRef.current = ref)} // Attach ref to the ContentEditable with explicit type
+            innerRef={() => {}} // Removed unused ref parameter
             autoFocus // Automatically focus the input on open
             html={formatTagsInContent(newTodo)}
             onChange={handleContentEditableChange}
             tagName="div"
             style={{
+              paddingRight: '40px', // Add padding to prevent text overlap with the icon
               border: '1px solid #ccc',
               borderRadius: '4px',
               padding: '8px',
@@ -159,6 +206,17 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
               fontSize: '1.2rem', // Increase font size
             }}
           />
+          <IconButton
+            onClick={() => setShowDateTimePicker((prev) => !prev)}
+            sx={{
+              position: 'absolute',
+              right: '8px',
+              top: '50%',
+              transform: 'translateY(-50%)', // Center the icon vertically
+            }}
+          >
+            <AccessTimeIcon />
+          </IconButton>
         </Box>
         <Box
           sx={{
@@ -236,6 +294,40 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
                 )}
               </Box>
             ))}
+          </Box>
+        )}
+        {showDateTimePicker && (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginTop: 2,
+              gap: 2,
+            }}
+          >
+            <TextField
+              type="date"
+              fullWidth
+              onChange={handleDateChange}
+              InputLabelProps={{ shrink: true }}
+              sx={getInputStyle(selectedDate)} // Apply dynamic style to fade when null
+            />
+            <TextField
+              type="time"
+              fullWidth
+              onChange={handleTimeChange}
+              InputLabelProps={{ shrink: true }}
+              sx={getInputStyle(selectedTime)} // Apply dynamic style to fade when null
+            />
+            <IconButton
+              onClick={() => setShowDateTimePicker(false)}
+              sx={{
+                color: 'red',
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
           </Box>
         )}
       </DialogContent>

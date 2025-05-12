@@ -1,8 +1,11 @@
 import { openDB, DBSchema } from 'idb';
+import { DateTime } from './utils/dateTimeTranslator';
 
 export type TodoPriority = 'urgent' | 'normal' | 'later';
 
 export type TodoStatus = 'active' | 'completed' | 'deleted' | 'archived';
+
+export type TodoWhen = "at" | "before" | "after";
 
 export type TodoActivity = {
   timestamp: number;
@@ -16,12 +19,8 @@ export interface Todo {
   status: TodoStatus;
   priority: TodoPriority;
   tags: string[];
-  when?: {
-    at?: number; // Specific time
-    allDay?: boolean; // All-day event
-    before?: number; // Time before which the todo should be completed
-    after?: number; // Time after which the todo should be completed
-  }
+  when?: TodoWhen;
+  date?: number;
   createdAt: number;
   completedAt?: number;
   activity: TodoActivity[];

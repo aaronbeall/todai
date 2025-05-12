@@ -39,17 +39,19 @@ function App() {
     }
   }, [dialogOpen]);
 
-  const handleAddTodo = async (newTodo: string) => {
-    if (newTodo.trim()) {
-      const tags = Array.from(newTodo.matchAll(/#\w+/g)).map((match) => match[0]);
+  const handleAddTodo = async (todoData: { text: string; date: number | null }) => {
+    const { text, date } = todoData;
+    if (text.trim()) {
+      const tags = Array.from(text.matchAll(/#\w+/g)).map((match) => match[0]);
       const todo: Todo = {
         id: Date.now(),
-        text: newTodo,
+        text,
         tags,
         status: 'active',
         createdAt: Date.now(),
         priority: 'normal',
         activity: [],
+        date: date || undefined, // Use the provided date or undefined if null
       };
       await addTodo(todo);
       setTodos(await getTodos());
@@ -250,7 +252,7 @@ function App() {
       <AddTodoDialog
         open={dialogOpen}
         onClose={handleDialogClose}
-        onAddTodo={handleAddTodo} // Pass the updated handler
+        onAddTodo={(todoData) => handleAddTodo(todoData)} // Adjust to match the updated handler
         tags={tags} // Pass tags from App.tsx to AddTodoDialog
       />
 
