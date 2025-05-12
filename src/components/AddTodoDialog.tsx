@@ -5,9 +5,7 @@ import CloseIcon from '@mui/icons-material/Close'; // Add CloseIcon import
 import { getTitleColor } from '../theme';
 import { Tag } from '../db';
 import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
-import { translateToDateTime } from '../utils/dateTimeTranslator'; // Import the natural language parser
-
-// Removed unused import of DateTime
+import { translateToDateTime, formatRelativeTime, combineDateAndTime } from '../utils/dateTimeTranslator'; // Import the natural language parser, formatRelativeTime, and combineDateAndTime
 
 interface AddTodoDialogProps {
   open: boolean;
@@ -354,6 +352,20 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
                 <CloseIcon />
               </IconButton>
             </Box>
+            {/* Add a relative time label under the date and time inputs */}
+            {(selectedDate || selectedTime !== null) && (
+              <Typography
+                variant="caption"
+                sx={{
+                  display: 'block',
+                  marginTop: 1,
+                  color: 'gray',
+                  textAlign: 'center',
+                }}
+              >
+                {(selectedDate || selectedTime) && formatRelativeTime(combineDateAndTime({ date: selectedDate, time: selectedTime }))}
+              </Typography>
+            )}
           </Box>
         )}
       </DialogContent>

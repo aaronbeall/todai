@@ -1,4 +1,4 @@
-import { addDays, isToday, isTomorrow, format } from 'date-fns';
+import { addDays, isToday, isTomorrow, format, formatDistanceToNow } from 'date-fns';
 
 // Define a reusable type for date and time
 export type DateTime = {
@@ -119,4 +119,55 @@ export const translateToWords = (date: number | null, time: number | null): stri
   } else {
     return "unknown";
   }
+};
+
+export const formatRelativeTime = (date: number | null): string => {
+  if (!date) return '';
+  return formatDistanceToNow(new Date(date), { addSuffix: true });
+};
+
+export const combineDateAndTime = ({ date, time }: { date?: number | null; time?: number | null }): number | null => {
+  if (!date && time == null) return null; // Adjusted null check for time
+
+  // Treat the date as local time
+  const dateObj = new Date();
+  if (date != null) {
+    dateObj.setFullYear(new Date(date).getUTCFullYear());
+    dateObj.setMonth(new Date(date).getUTCMonth());
+    dateObj.setDate(new Date(date).getUTCDate());
+  }
+
+  if (time != null) { // Ensured time is not null or undefined
+    const hours = Math.floor(time / 60);
+    const minutes = time % 60;
+    dateObj.setHours(hours, minutes, 0, 0); // Set hours and minutes in local time
+  } else {
+    dateObj.setHours(0, 0, 0, 0); // Set to midnight if no time is provided
+  }
+
+  return dateObj.getTime();
+};
+
+export type DateTimeSetting = {
+  day?: number;
+  month?: number;
+  year?: number;
+  hour?: number;
+  minute?: number;
+}
+
+export type DateTimeType = 'dateTime' | 'date' | 'time';
+
+export const determineDateTimeType = (timestamp: number): DateTimeType => {
+  const dateObj = new Date(timestamp);
+
+  if (dateObj.getUTCFullYear() === 1970 && dateObj.getUTCMonth() === 0 && dateObj.getUTCDate() === 1) {
+    return 'time'; // Unix epoch date with time
+  }
+
+  if (dateObj.getUTCHours() === 0 && dateObj.getUTCMinutes() === 0 && dateObj.getUTCSeconds() === 0 && dateObj.getUTCMilliseconds() === 0) {
+    return 'date'; // Date with no time
+  }
+
+  return 'dateTime'; // Date with time
 };

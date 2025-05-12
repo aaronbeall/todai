@@ -6,7 +6,7 @@ import { addTodo, getTodos, getTags, Todo, Tag } from './db';
 import { getGradientBackground, getTitleColor, getTimeOfDayEmoji } from './theme';
 import './App.css';
 import AddTodoDialog from './components/AddTodoDialog';
-import { formatDistanceToNow } from 'date-fns'; // Import relative time formatter
+import { formatRelativeTime } from './utils/dateTimeTranslator'; // Import relative time formatter
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'; // Import Material-UI calendar icon
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Import the Material-UI CheckCircle icon
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'; // Import Material-UI RadioButtonUnchecked icon
@@ -94,6 +94,10 @@ function App() {
   const filteredTodos = selectedTag
     ? todos.filter((todo) => todo.tags.some((tag) => tag.toLowerCase() === selectedTag.toLowerCase()))
     : todos;
+
+  const relativeTimeLabel = (date: number | null) => {
+    return date ? formatRelativeTime(date) : '';
+  };
 
   return (
     <Box
@@ -327,13 +331,14 @@ function App() {
                           fontSize: '1rem',
                           marginRight: '4px',
                           color: 'inherit',
+                          alignSelf: 'center',
                         }}
                       />
                       <Typography
                         variant="caption"
                         sx={{ color: 'inherit' }}
                       >
-                        {formatDistanceToNow(new Date(todo.date), { addSuffix: true })}
+                        {relativeTimeLabel(todo.date)}
                       </Typography>
                     </Box>
                   )}
