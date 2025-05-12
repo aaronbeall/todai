@@ -8,7 +8,7 @@ export type TodoWhen = "at" | "before" | "after";
 
 export type TodoActivity = {
   timestamp: number;
-  action: 'created' | 'updated' | 'deleted' | 'archived' | 'completed' | 'activated' | 'snoozed' | 'rescheduled' | 'tagged' | 'untagged';
+  action: 'created' | 'updated' | 'deleted' | 'archived' | 'completed' | 'activated' | 'snoozed' | 'rescheduled' | 'tagged' | 'untagged' | 'started' | 'paused';
   change?: Partial<Todo>;
 }
 
@@ -22,6 +22,7 @@ export interface Todo {
   date?: number;
   createdAt: number;
   completedAt?: number;
+  startedAt?: number;
   activity: TodoActivity[];
   parent?: number;
   description?: string;

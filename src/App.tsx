@@ -12,6 +12,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Import the Mat
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'; // Import Material-UI RadioButtonUnchecked icon
 import { SideDrawer } from './components/SideDrawer';
 import Tooltip from '@mui/material/Tooltip'; // Import Tooltip from Material-UI
+import { sortAndCategorizeTodos } from './utils/todoSorter'; // Import the sorting utility
 
 function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -93,9 +94,11 @@ function App() {
     return simulatedDate.toLocaleDateString(undefined, { weekday: 'long' });
   };
 
-  const filteredTodos = selectedTag
-    ? todos.filter((todo) => todo.tags.some((tag) => tag.toLowerCase() === selectedTag.toLowerCase()))
-    : todos;
+  const categorizedTodos = sortAndCategorizeTodos(
+    todos
+      .filter((todo) => todo.status === 'active') // Only active todos
+      .filter((todo) => !selectedTag || todo.tags.includes(selectedTag)) // Filter by selectedTag if applicable
+  );
 
   return (
     <Box
@@ -193,8 +196,37 @@ function App() {
       />
 
       <Box sx={{ padding: 2, backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2, boxShadow: 1 }}>
+        <Typography variant="h6" sx={{ marginBottom: 2, color: 'rgba(255, 255, 255, 0.7)' }}>Now</Typography>
         <Stack spacing={1}>
-          {filteredTodos.map((todo) => (
+          {categorizedTodos.now.map((todo) => (
+            <TodoListItem
+              key={todo.id}
+              todo={todo}
+              tags={tags}
+              handleToggleComplete={handleToggleComplete}
+            />
+          ))}
+        </Stack>
+      </Box>
+
+      <Box sx={{ padding: 2, backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2, boxShadow: 1, marginTop: 4 }}>
+        <Typography variant="h6" sx={{ marginBottom: 2, color: 'rgba(255, 255, 255, 0.7)' }}>Next</Typography>
+        <Stack spacing={1}>
+          {categorizedTodos.next.map((todo) => (
+            <TodoListItem
+              key={todo.id}
+              todo={todo}
+              tags={tags}
+              handleToggleComplete={handleToggleComplete}
+            />
+          ))}
+        </Stack>
+      </Box>
+
+      <Box sx={{ padding: 2, backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2, boxShadow: 1, marginTop: 4 }}>
+        <Typography variant="h6" sx={{ marginBottom: 2, color: 'rgba(255, 255, 255, 0.7)' }}>Later</Typography>
+        <Stack spacing={1}>
+          {categorizedTodos.later.map((todo) => (
             <TodoListItem
               key={todo.id}
               todo={todo}
