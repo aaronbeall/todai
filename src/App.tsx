@@ -236,7 +236,7 @@ function App() {
         >
           {getSimulatedDay()}
           <span role="img" aria-label="time-of-day">
-            {getTimeOfDayEmoji(new Date().getHours() + timeOffset)}
+            {getTimeOfDayEmoji(timeOffset)}
           </span>
         </Typography>
         <IconButton
@@ -257,6 +257,7 @@ function App() {
       <AddTodoDialog
         open={dialogOpen}
         onClose={handleDialogClose}
+        timeOffset={timeOffset}
         onAddTodo={(todoData) => handleAddTodo(todoData)} // Adjust to match the updated handler
         tags={tags} // Pass tags from App.tsx to AddTodoDialog
       />

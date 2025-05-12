@@ -13,7 +13,7 @@ interface AddTodoDialogProps {
   open: boolean;
   onClose: () => void;
   onAddTodo: (newTodo: { text: string; date: number | null }) => void; // Update onAddTodo to accept an object with text and date
-  timeOffset?: number; // Make timeOffset optional in AddTodoDialogProps
+  timeOffset: number; // Make timeOffset optional in AddTodoDialogProps
   tags: Tag[]; // Add tags prop to pass available tags
 }
 

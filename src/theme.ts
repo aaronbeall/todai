@@ -18,7 +18,9 @@ export const getTitleColor = (timeOffset = 0) => {
   return '#243B55'; // Night matching color
 };
 
-export function getTimeOfDayEmoji(hour: number): string {
+// Refactor getTimeOfDayEmoji to include timeOffset behavior
+export function getTimeOfDayEmoji(timeOffset = 0): string {
+  const hour = (new Date().getHours() + timeOffset + 24) % 24; // Ensure hour is within 0-23
   if (hour >= 5 && hour < 12) return '☀️'; // Morning
   if (hour >= 12 && hour < 18) return '🌤️'; // Afternoon
   if (hour >= 18 && hour < 21) return '🌇'; // Evening
