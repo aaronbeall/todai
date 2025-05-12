@@ -6,7 +6,7 @@ import { addTodo, getTodos, getTags, Todo, Tag } from './db';
 import { getGradientBackground, getTitleColor, getTimeOfDayEmoji } from './theme';
 import './App.css';
 import AddTodoDialog from './components/AddTodoDialog';
-import { formatRelativeTime } from './utils/dateTimeTranslator'; // Import relative time formatter
+import { formatRelativeTime, splitDateAndTime } from './utils/dateTimeTranslator'; // Import relative time formatter
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'; // Import Material-UI calendar icon
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Import the Material-UI CheckCircle icon
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'; // Import Material-UI RadioButtonUnchecked icon
@@ -96,6 +96,7 @@ function App() {
     : todos;
 
   const relativeTimeLabel = (date: number | null) => {
+    // return date ? new Date(date).toString() : "";
     return date ? formatRelativeTime(date) : '';
   };
 

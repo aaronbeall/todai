@@ -5,7 +5,9 @@ import CloseIcon from '@mui/icons-material/Close'; // Add CloseIcon import
 import { getTitleColor } from '../theme';
 import { Tag } from '../db';
 import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
-import { translateToDateTime, formatRelativeTime, combineDateAndTime } from '../utils/dateTimeTranslator'; // Import the natural language parser, formatRelativeTime, and combineDateAndTime
+import { translateToDateTime, formatRelativeTime, combineDateAndTime } from '../utils/dateTimeTranslator'; // Removed unused `combineDateAndTime` import.
+
+// Removed unused `formatDate` import.
 
 interface AddTodoDialogProps {
   open: boolean;
@@ -136,17 +138,12 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
 
   const handleAddTodo = () => {
     if (newTodo.trim()) {
-      const timestamp = (() => {
-        if (selectedDate && selectedTime) {
-          return selectedDate + selectedTime * 60 * 1000;
-        } else if (selectedDate) {
-          return selectedDate;
-        } else if (selectedTime) {
-          return selectedTime * 60 * 1000;
-        } else {
-          return null;
-        }
-      })();
+      const timestamp = combineDateAndTime({ date: selectedDate, time: selectedTime });
+
+      // console.log("Adding Todo:", newTodo, "with timestamp:", timestamp);
+      // selectedDate && console.log("selectedDate", new Date(selectedDate)); // Log the date in local format
+      // selectedTime && console.log("selectedTime", new Date(selectedTime)); // Log the time in local format
+      // timestamp && console.log(new Date(timestamp)); // Log the date in local format
 
       onAddTodo({ text: newTodo, date: timestamp });
       setNewTodo(""); // Clear the input after adding
@@ -157,8 +154,9 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
   };
 
   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const date = new Date(event.target.value).getTime();
-    setSelectedDate(date);
+    const [year, month, day] = event.target.value.split('-').map(Number);
+    const localDate = new Date(year, month - 1, day, 0, 0, 0, 0).getTime(); // Construct a local timestamp
+    setSelectedDate(localDate);
   };
 
   const handleTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -170,6 +168,21 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
   const getInputStyle = (value: number | null) => ({
     opacity: value === null ? 0.5 : 1, // Fade out if value is null
   });
+
+  const formatDateForInput = (timestamp: number | null): string => {
+    if (!timestamp) return '';
+    const date = new Date(timestamp);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-based
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const formatTimeForInput = (minutes: number | null): string => {
+    return minutes !== null
+      ? `${Math.floor(minutes / 60).toString().padStart(2, '0')}:${(minutes % 60).toString().padStart(2, '0')}`
+      : '';
+  };
 
   return (
     <Dialog
@@ -330,7 +343,7 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
               <TextField
                 type="date"
                 fullWidth
-                value={selectedDate ? new Date(selectedDate).toISOString().split('T')[0] : ''} // Set value from state
+                value={formatDateForInput(selectedDate)} // Use helper function for date formatting
                 onChange={handleDateChange}
                 InputLabelProps={{ shrink: true }}
                 sx={getInputStyle(selectedDate)} // Apply dynamic style to fade when null
@@ -338,7 +351,7 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
               <TextField
                 type="time"
                 fullWidth
-                value={selectedTime !== null ? `${Math.floor(selectedTime / 60).toString().padStart(2, '0')}:${(selectedTime % 60).toString().padStart(2, '0')}` : ''} // Set value from state
+                value={formatTimeForInput(selectedTime)} // Use helper function for time formatting
                 onChange={handleTimeChange}
                 InputLabelProps={{ shrink: true }}
                 sx={getInputStyle(selectedTime)} // Apply dynamic style to fade when null
@@ -363,7 +376,7 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
                   textAlign: 'center',
                 }}
               >
-                {(selectedDate || selectedTime) && formatRelativeTime(combineDateAndTime({ date: selectedDate, time: selectedTime }))}
+                {(selectedDate || selectedTime) && formatRelativeTime(combineDateAndTime({ date: selectedDate, time: selectedTime })!)}
               </Typography>
             )}
           </Box>

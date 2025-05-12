@@ -1,13 +1,16 @@
 import { addDays, isToday, isTomorrow, format, formatDistanceToNow } from 'date-fns';
 
-// Define a reusable type for date and time
+// Defines a user selected date and time
 export type DateTime = {
-  date: number | null; // Unix timestamp for the date
-  time: number | null; // Minutes since midnight for the time
-  matchedWords: string[]; // Array of matched words or phrases
+  date?: number | null; // Unix timestamp representing the date (ex 2025-01-01 -> 1704067200000)
+  time?: number | null; // Minutes since midnight for the time (ex 9:00 AM -> 540)
 };
 
-export const translateToDateTime = (input: string): DateTime => {
+export type MatchedDateTime = Required<DateTime> & {
+  matchedWords: string[]; // Array of words that matched the date/time
+};
+
+export const translateToDateTime = (input: string): MatchedDateTime => {
   const now = new Date();
   const lowerInput = input.toLowerCase();
 
@@ -83,7 +86,7 @@ export const translateToDateTime = (input: string): DateTime => {
   return { date, time, matchedWords };
 };
 
-export const translateToWords = (date: number | null, time: number | null): string => {
+export const translateToWords = ({ date, time }: DateTime): string => {
   let datePart = "";
   let timePart = "";
 
@@ -98,13 +101,17 @@ export const translateToWords = (date: number | null, time: number | null): stri
     }
   }
 
-  if (time !== null) {
+  if (time !== null && time !== undefined) {
     if (time >= 5 * 60 && time < 12 * 60) {
       timePart = "morning";
+    } else if (time == 12 * 60) {
+      timePart = "noon";
     } else if (time >= 12 * 60 && time < 17 * 60) {
       timePart = "afternoon";
     } else if (time >= 17 * 60 && time < 21 * 60) {
       timePart = "evening";
+    } else if (time == 0) {
+      timePart = "midnight";
     } else {
       timePart = "night";
     }
@@ -121,40 +128,47 @@ export const translateToWords = (date: number | null, time: number | null): stri
   }
 };
 
-export const formatRelativeTime = (date: number | null): string => {
+export const formatRelativeTime = (date: number): string => {
   if (!date) return '';
-  return formatDistanceToNow(new Date(date), { addSuffix: true });
-};
 
-export const combineDateAndTime = ({ date, time }: { date?: number | null; time?: number | null }): number | null => {
-  if (!date && time == null) return null; // Adjusted null check for time
+  const targetDate = new Date(date);
 
-  // Treat the date as local time
-  const dateObj = new Date();
-  if (date != null) {
-    dateObj.setFullYear(new Date(date).getUTCFullYear());
-    dateObj.setMonth(new Date(date).getUTCMonth());
-    dateObj.setDate(new Date(date).getUTCDate());
+  if (isToday(targetDate) || isTomorrow(targetDate)) {
+    return translateToWords(splitDateAndTime(date));
+  } else if (formatDistanceToNow(targetDate, { addSuffix: false }).includes('yesterday')) {
+    return 'yesterday';
   }
 
-  if (time != null) { // Ensured time is not null or undefined
+  return formatDistanceToNow(targetDate, { addSuffix: true });
+};
+
+export const combineDateAndTime = ({ date, time }: DateTime): number | null => {
+  if (!date && time == null) return null;
+
+  const dateObj = new Date(date || Date.now());
+
+  if (time != null) {
     const hours = Math.floor(time / 60);
     const minutes = time % 60;
-    dateObj.setHours(hours, minutes, 0, 0); // Set hours and minutes in local time
+    dateObj.setHours(hours, minutes, 0, 0);
   } else {
-    dateObj.setHours(0, 0, 0, 0); // Set to midnight if no time is provided
+    dateObj.setHours(0, 0, 0, 0);
   }
 
   return dateObj.getTime();
 };
 
-export type DateTimeSetting = {
-  day?: number;
-  month?: number;
-  year?: number;
-  hour?: number;
-  minute?: number;
-}
+export const splitDateAndTime = (timestamp: number): DateTime => {
+  const dateObj = new Date(timestamp);
+
+  // Extract the date part by setting the time to midnight
+  const date = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate(), 0, 0, 0, 0).getTime();
+
+  // Extract the time part by calculating minutes since midnight
+  const time = dateObj.getHours() * 60 + dateObj.getMinutes();
+
+  return { date, time };
+};
 
 export type DateTimeType = 'dateTime' | 'date' | 'time';
 
@@ -165,9 +179,14 @@ export const determineDateTimeType = (timestamp: number): DateTimeType => {
     return 'time'; // Unix epoch date with time
   }
 
-  if (dateObj.getUTCHours() === 0 && dateObj.getUTCMinutes() === 0 && dateObj.getUTCSeconds() === 0 && dateObj.getUTCMilliseconds() === 0) {
+  if (
+    dateObj.getUTCHours() === 0 &&
+    dateObj.getUTCMinutes() === 0 &&
+    dateObj.getUTCSeconds() === 0 &&
+    dateObj.getUTCMilliseconds() === 0
+  ) {
     return 'date'; // Date with no time
   }
 
-  return 'dateTime'; // Date with time
+  return 'dateTime'; // Default case: Date with time
 };
