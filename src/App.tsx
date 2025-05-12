@@ -6,6 +6,8 @@ import { addTodo, getTodos, getTags, Todo, Tag } from './db';
 import { getGradientBackground, getTitleColor, getTimeOfDayEmoji } from './theme';
 import './App.css';
 import AddTodoDialog from './components/AddTodoDialog';
+import { formatDistanceToNow } from 'date-fns'; // Import relative time formatter
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'; // Import Material-UI calendar icon
 
 function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -311,6 +313,33 @@ function App() {
                     }
                     return part;
                   })}
+                  {todo.date && (
+                    <Box
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        border: '1px solid rgba(255, 255, 255, 0.5)',
+                        borderRadius: '9999px', // Rounded pill shape
+                        padding: '2px 8px',
+                        marginLeft: 1,
+                        color: 'rgba(255, 255, 255, 0.7)',
+                      }}
+                    >
+                      <CalendarTodayIcon
+                        sx={{
+                          fontSize: '1rem',
+                          marginRight: '4px',
+                          color: 'inherit',
+                        }}
+                      />
+                      <Typography
+                        variant="caption"
+                        sx={{ color: 'inherit' }}
+                      >
+                        {formatDistanceToNow(new Date(todo.date), { addSuffix: true })}
+                      </Typography>
+                    </Box>
+                  )}
                 </Typography>
               </Box>
               <IconButton onClick={() => console.log('Options menu clicked')} sx={{ color: 'white' }}>
