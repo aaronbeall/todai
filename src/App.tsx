@@ -96,11 +96,6 @@ function App() {
     ? todos.filter((todo) => todo.tags.some((tag) => tag.toLowerCase() === selectedTag.toLowerCase()))
     : todos;
 
-  const relativeTimeLabel = (date: number | null) => {
-    // return date ? new Date(date).toString() : "";
-    return date ? formatRelativeTime(date) : '';
-  };
-
   return (
     <Box
       sx={{
@@ -199,85 +194,12 @@ function App() {
       <Box sx={{ padding: 2, backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2, boxShadow: 1 }}>
         <Stack spacing={1}>
           {filteredTodos.map((todo) => (
-            <Box
+            <TodoListItem
               key={todo.id}
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                paddingY: 0.5,
-              }}
-            >
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Checkbox
-                  checked={todo.status === 'completed'}
-                  onChange={() => handleToggleComplete(todo.id, todo.status !== 'completed')}
-                  icon={<RadioButtonUncheckedIcon style={{ fontSize: '20px', color: 'white' }} />}
-                  checkedIcon={<CheckCircleIcon style={{ fontSize: '20px', color: 'white' }} />}
-                  sx={{
-                    padding: 0,
-                  }}
-                />
-                <Typography
-                  component="div"
-                  sx={{
-                    textDecoration: todo.status === 'completed' ? 'line-through' : 'none',
-                    color: 'white',
-                  }}
-                >
-                  {todo.text.split(/(#[^\s]+)/g).map((part, index) => {
-                    if (part.startsWith('#')) {
-                      const tagColor = tags.find((tag) => tag.name === part)?.color || 'rgba(255, 255, 255, 0.3)';
-                      return (
-                        <Chip
-                          key={index}
-                          label={part}
-                          size="small"
-                          sx={{
-                            backgroundColor: tagColor,
-                            color: 'white',
-                            marginLeft: 0.5,
-                            marginRight: 0.5,
-                          }}
-                        />
-                      );
-                    }
-                    return <span key={index}>{part}</span>;
-                  })}
-                  {todo.date && (
-                    <Box
-                      sx={{
-                        display: 'inline-flex',
-                        alignItems: 'baseline',
-                        border: '1px solid rgba(255, 255, 255, 0.5)',
-                        borderRadius: '9999px',
-                        padding: '2px 8px',
-                        marginLeft: 1,
-                        color: 'rgba(255, 255, 255, 0.7)',
-                      }}
-                    >
-                      <CalendarTodayIcon
-                        sx={{
-                          fontSize: '1rem',
-                          marginRight: '4px',
-                          color: 'inherit',
-                          alignSelf: 'center',
-                        }}
-                      />
-                      <Typography
-                        variant="caption"
-                        sx={{ color: 'inherit' }}
-                      >
-                        {relativeTimeLabel(todo.date)}
-                      </Typography>
-                    </Box>
-                  )}
-                </Typography>
-              </Box>
-              <IconButton onClick={() => console.log('Options menu clicked')} sx={{ color: 'white' }}>
-                <MoreHoriz />
-              </IconButton>
-            </Box>
+              todo={todo}
+              tags={tags}
+              handleToggleComplete={handleToggleComplete}
+            />
           ))}
         </Stack>
       </Box>
@@ -286,3 +208,93 @@ function App() {
 }
 
 export default App;
+
+const TodoListItem = ({
+  todo,
+  tags,
+  handleToggleComplete,
+}: {
+  todo: Todo;
+  tags: Tag[];
+  handleToggleComplete: (id: number, completed: boolean) => void;
+}) => (
+  <Box
+    key={todo.id}
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingY: 0.5,
+    }}
+  >
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <Checkbox
+        checked={todo.status === 'completed'}
+        onChange={() => handleToggleComplete(todo.id, todo.status !== 'completed')}
+        icon={<RadioButtonUncheckedIcon style={{ fontSize: '20px', color: 'white' }} />}
+        checkedIcon={<CheckCircleIcon style={{ fontSize: '20px', color: 'white' }} />}
+        sx={{
+          padding: 0,
+        }}
+      />
+      <Typography
+        component="div"
+        sx={{
+          textDecoration: todo.status === 'completed' ? 'line-through' : 'none',
+          color: 'white',
+        }}
+      >
+        {todo.text.split(/(#[^\s]+)/g).map((part, index) => {
+          if (part.startsWith('#')) {
+            const tagColor = tags.find((tag) => tag.name === part)?.color || 'rgba(255, 255, 255, 0.3)';
+            return (
+              <Chip
+                key={index}
+                label={part}
+                size="small"
+                sx={{
+                  backgroundColor: tagColor,
+                  color: 'white',
+                  marginLeft: 0.5,
+                  marginRight: 0.5,
+                }}
+              />
+            );
+          }
+          return <span key={index}>{part}</span>;
+        })}
+        {todo.date && (
+          <Box
+            sx={{
+              display: 'inline-flex',
+              alignItems: 'baseline',
+              border: '1px solid rgba(255, 255, 255, 0.5)',
+              borderRadius: '9999px',
+              padding: '2px 8px',
+              marginLeft: 1,
+              color: 'rgba(255, 255, 255, 0.7)',
+            }}
+          >
+            <CalendarTodayIcon
+              sx={{
+                fontSize: '1rem',
+                marginRight: '4px',
+                color: 'inherit',
+                alignSelf: 'center',
+              }}
+            />
+            <Typography
+              variant="caption"
+              sx={{ color: 'inherit' }}
+            >
+              {todo.date != null && formatRelativeTime(todo.date)}
+            </Typography>
+          </Box>
+        )}
+      </Typography>
+    </Box>
+    <IconButton onClick={() => console.log('Options menu clicked')} sx={{ color: 'white' }}>
+      <MoreHoriz />
+    </IconButton>
+  </Box>
+);
