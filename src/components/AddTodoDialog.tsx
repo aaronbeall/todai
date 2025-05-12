@@ -217,7 +217,9 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
           }}
         >
           <ContentEditable
-            innerRef={() => {}} // Removed unused ref parameter
+            innerRef={(ref: HTMLElement | null) => {
+              inputRef.current = ref; // Assign the ref to inputRef
+            }}
             autoFocus // Automatically focus the input on open
             html={formatTagsInContent(newTodo)}
             onChange={handleContentEditableChange}
