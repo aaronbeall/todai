@@ -104,15 +104,11 @@ export const translateToWords = ({ date, time }: DateTime): string => {
   if (time !== null && time !== undefined) {
     if (time >= 5 * 60 && time < 12 * 60) {
       timePart = "morning";
-    } else if (time == 12 * 60) {
-      timePart = "noon";
     } else if (time >= 12 * 60 && time < 17 * 60) {
       timePart = "afternoon";
     } else if (time >= 17 * 60 && time < 21 * 60) {
       timePart = "evening";
-    } else if (time == 0) {
-      timePart = "midnight";
-    } else {
+    } else if (time != 0) {
       timePart = "night";
     }
   }
