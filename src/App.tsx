@@ -317,7 +317,7 @@ function App() {
                     <Box
                       sx={{
                         display: 'inline-flex',
-                        alignItems: 'center',
+                        alignItems: 'baseline', // Align with the text baseline
                         border: '1px solid rgba(255, 255, 255, 0.5)',
                         borderRadius: '9999px', // Rounded pill shape
                         padding: '2px 8px',
