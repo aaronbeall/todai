@@ -7,8 +7,7 @@ export type TodoStatus = 'active' | 'completed' | 'deleted' | 'archived';
 export type TodoActivity = {
   timestamp: number;
   action: 'created' | 'updated' | 'prioritized' | 'rescheduled' | 'deleted' | 'completed' | 'archived';
-  oldValue?: string;
-  newValue?: string;
+  change?: string;
 }
 
 export interface Todo {
@@ -17,8 +16,12 @@ export interface Todo {
   status: TodoStatus;
   priority: TodoPriority;
   tags: string[];
-  dueAt?: number;
-  expiredAt?: number;
+  when?: {
+    at?: number; // Specific time
+    allDay?: boolean; // All-day event
+    before?: number; // Time before which the todo should be completed
+    after?: number; // Time after which the todo should be completed
+  }
   createdAt: number;
   completedAt?: number;
   activity: TodoActivity[];
