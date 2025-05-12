@@ -8,6 +8,8 @@ import './App.css';
 import AddTodoDialog from './components/AddTodoDialog';
 import { formatDistanceToNow } from 'date-fns'; // Import relative time formatter
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'; // Import Material-UI calendar icon
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Import the Material-UI CheckCircle icon
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'; // Import Material-UI RadioButtonUnchecked icon
 
 function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -61,10 +63,11 @@ function App() {
     }
   };
 
+  // Fix the status type in handleToggleComplete to match the TodoStatus type
   const handleToggleComplete = async (id: number, completed: boolean) => {
     const todo = todos.find((t) => t.id === id);
     if (todo) {
-      const updatedTodo = { ...todo, completed };
+      const updatedTodo = { ...todo, status: completed ? 'completed' as const : 'active' as const }; // Ensure status matches TodoStatus type
       await addTodo(updatedTodo); // Update the todo in the database
       setTodos(await getTodos()); // Refresh the todos
     }
@@ -274,26 +277,14 @@ function App() {
                 <Checkbox
                   checked={todo.status === 'completed'}
                   onChange={() => handleToggleComplete(todo.id, todo.status !== 'completed')}
-                  icon={<span style={{
-                    display: 'inline-block',
-                    width: '20px',
-                    height: '20px',
-                    borderRadius: '50%',
-                    border: '2px solid white',
-                  }} />}
-                  checkedIcon={<span style={{
-                    display: 'inline-block',
-                    width: '20px',
-                    height: '20px',
-                    borderRadius: '50%',
-                    backgroundColor: 'white',
-                  }} />}
+                  icon={<RadioButtonUncheckedIcon style={{ fontSize: '20px', color: 'white' }} />}
+                  checkedIcon={<CheckCircleIcon style={{ fontSize: '20px', color: 'white' }} />}
                   sx={{
                     padding: 0,
                   }}
                 />
                 <Typography
-                  component="div" // Render Typography as a <div> instead of a <p>
+                  component="div"
                   sx={{
                     textDecoration: todo.status === 'completed' ? 'line-through' : 'none',
                     color: 'white',
@@ -307,19 +298,24 @@ function App() {
                           key={index}
                           label={part}
                           size="small"
-                          sx={{ backgroundColor: tagColor, color: 'white', marginLeft: 0.5, marginRight: 0.5 }}
+                          sx={{
+                            backgroundColor: tagColor,
+                            color: 'white',
+                            marginLeft: 0.5,
+                            marginRight: 0.5,
+                          }}
                         />
                       );
                     }
-                    return part;
+                    return <span key={index}>{part}</span>;
                   })}
                   {todo.date && (
                     <Box
                       sx={{
                         display: 'inline-flex',
-                        alignItems: 'baseline', // Align with the text baseline
+                        alignItems: 'baseline',
                         border: '1px solid rgba(255, 255, 255, 0.5)',
-                        borderRadius: '9999px', // Rounded pill shape
+                        borderRadius: '9999px',
                         padding: '2px 8px',
                         marginLeft: 1,
                         color: 'rgba(255, 255, 255, 0.7)',
