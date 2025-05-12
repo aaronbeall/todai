@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button, Typography, Box, IconButton, TextField } from '@mui/material'; // Removed unused Grid import
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import DeleteIcon from '@mui/icons-material/Delete'; // Replace AccessTimeIcon with DeleteIcon
+import CloseIcon from '@mui/icons-material/Close'; // Add CloseIcon import
 import { getTitleColor } from '../theme';
 import { Tag } from '../db';
 import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
@@ -299,35 +299,42 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
         {showDateTimePicker && (
           <Box
             sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
+              border: '1px solid #ccc',
+              borderRadius: '8px',
+              padding: 2,
               marginTop: 2,
-              gap: 2,
             }}
           >
-            <TextField
-              type="date"
-              fullWidth
-              onChange={handleDateChange}
-              InputLabelProps={{ shrink: true }}
-              sx={getInputStyle(selectedDate)} // Apply dynamic style to fade when null
-            />
-            <TextField
-              type="time"
-              fullWidth
-              onChange={handleTimeChange}
-              InputLabelProps={{ shrink: true }}
-              sx={getInputStyle(selectedTime)} // Apply dynamic style to fade when null
-            />
-            <IconButton
-              onClick={() => setShowDateTimePicker(false)}
+            <Box
               sx={{
-                color: 'red',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 2,
               }}
             >
-              <DeleteIcon />
-            </IconButton>
+              <TextField
+                type="date"
+                fullWidth
+                onChange={handleDateChange}
+                InputLabelProps={{ shrink: true }}
+                sx={getInputStyle(selectedDate)} // Apply dynamic style to fade when null
+              />
+              <TextField
+                type="time"
+                fullWidth
+                onChange={handleTimeChange}
+                InputLabelProps={{ shrink: true }}
+                sx={getInputStyle(selectedTime)} // Apply dynamic style to fade when null
+              />
+              <IconButton
+                onClick={() => setShowDateTimePicker(false)}
+                sx={{
+                  color: 'red',
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+            </Box>
           </Box>
         )}
       </DialogContent>
