@@ -5,6 +5,7 @@ import CloseIcon from '@mui/icons-material/Close'; // Add CloseIcon import
 import { getTitleColor } from '../theme';
 import { Tag } from '../db';
 import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
+import { translateToDateTime } from '../utils/dateTimeTranslator'; // Import the natural language parser
 
 // Removed unused import of DateTime
 
@@ -28,6 +29,7 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
   const [showDateTimePicker, setShowDateTimePicker] = useState(false); // State to toggle date-time picker
   const [selectedDate, setSelectedDate] = useState<number | null>(null); // State for selected date
   const [selectedTime, setSelectedTime] = useState<number | null>(null); // State for selected time
+  const [matchedDateTimeWords, setMatchedDateTimeWords] = useState<string[]>([]); // State to store matched date-time words
   const inputRef = React.useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -83,25 +85,40 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
     } else {
       setTagSuggestions([]);
     }
+
+    const parsedDateTime = translateToDateTime(textContent);
+    if (parsedDateTime.date || parsedDateTime.time) {
+      setSelectedDate(parsedDateTime.date);
+      setSelectedTime(parsedDateTime.time);
+      setShowDateTimePicker(true); // Show the date-time picker if a date or time is detected
+    }
+    setMatchedDateTimeWords(parsedDateTime.matchedWords); // Update matched date-time words state
   };
 
   const formatTagsInContent = (content: string) => {
     const div = document.createElement('div');
-    content.split(/(#[^\s]+)/).forEach((part) => {
+    content.split(/(#[^\s]+|\b\w+\b)/).forEach((part) => {
       const span = document.createElement('span');
       const matchingTag = part.startsWith('#') ? tags.find((tag) => tag.name === part) : null;
 
       if (matchingTag) {
+        // Matching tag found
         span.style.backgroundColor = matchingTag.color;
         span.style.color = 'white';
         span.style.borderRadius = '9999px';
         span.style.padding = '0 4px';
         span.textContent = part;
       } else if (part.startsWith('#')) {
+        // New tag input
         span.style.border = '1px dashed gray';
         span.style.color = 'gray';
         span.style.borderRadius = '9999px';
         span.style.padding = '0 4px';
+        span.textContent = part;
+      } else if (matchedDateTimeWords.includes(part)) {
+        // Highlight matched date-time words in yellow
+        span.style.backgroundColor = 'yellow';
+        span.style.color = 'black';
         span.textContent = part;
       } else {
         span.textContent = part;
@@ -315,6 +332,7 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
               <TextField
                 type="date"
                 fullWidth
+                value={selectedDate ? new Date(selectedDate).toISOString().split('T')[0] : ''} // Set value from state
                 onChange={handleDateChange}
                 InputLabelProps={{ shrink: true }}
                 sx={getInputStyle(selectedDate)} // Apply dynamic style to fade when null
@@ -322,6 +340,7 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
               <TextField
                 type="time"
                 fullWidth
+                value={selectedTime !== null ? `${Math.floor(selectedTime / 60).toString().padStart(2, '0')}:${(selectedTime % 60).toString().padStart(2, '0')}` : ''} // Set value from state
                 onChange={handleTimeChange}
                 InputLabelProps={{ shrink: true }}
                 sx={getInputStyle(selectedTime)} // Apply dynamic style to fade when null

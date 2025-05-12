@@ -4,6 +4,7 @@ import { addDays, isToday, isTomorrow, format } from 'date-fns';
 export type DateTime = {
   date: number | null; // Unix timestamp for the date
   time: number | null; // Minutes since midnight for the time
+  matchedWords: string[]; // Array of matched words or phrases
 };
 
 export const translateToDateTime = (input: string): DateTime => {
@@ -12,28 +13,74 @@ export const translateToDateTime = (input: string): DateTime => {
 
   let date: number | null = null;
   let time: number | null = null;
+  const matchedWords: string[] = [];
 
   if (lowerInput.includes("tomorrow")) {
     date = addDays(now, 1).getTime();
+    matchedWords.push("tomorrow");
   } else if (lowerInput.includes("today")) {
     date = now.getTime();
+    matchedWords.push("today");
+  } else {
+    const daysMatch = lowerInput.match(/(\d+) days?/);
+    if (daysMatch) {
+      const days = parseInt(daysMatch[1], 10);
+      date = addDays(now, days).getTime();
+      matchedWords.push(`${days} days`);
+    } else if (lowerInput.includes("next week")) {
+      date = addDays(now, 7).getTime();
+      matchedWords.push("next week");
+    } else if (lowerInput.includes("next month")) {
+      date = addDays(now, 30).getTime(); // Approximation for next month
+      matchedWords.push("next month");
+    } else if (lowerInput.includes("next year")) {
+      date = addDays(now, 365).getTime(); // Approximation for next year
+      matchedWords.push("next year");
+    } else {
+      const weeksMatch = lowerInput.match(/(\d+) weeks?/);
+      if (weeksMatch) {
+        const weeks = parseInt(weeksMatch[1], 10);
+        date = addDays(now, weeks * 7).getTime();
+        matchedWords.push(`${weeks} weeks`);
+      } else {
+        const monthsMatch = lowerInput.match(/(\d+) months?/);
+        if (monthsMatch) {
+          const months = parseInt(monthsMatch[1], 10);
+          date = addDays(now, months * 30).getTime(); // Approximation for months
+          matchedWords.push(`${months} months`);
+        } else {
+          const yearsMatch = lowerInput.match(/(\d+) years?/);
+          if (yearsMatch) {
+            const years = parseInt(yearsMatch[1], 10);
+            date = addDays(now, years * 365).getTime(); // Approximation for years
+            matchedWords.push(`${years} years`);
+          }
+        }
+      }
+    }
   }
 
   if (lowerInput.includes("morning")) {
     time = 9 * 60; // 9:00 AM in minutes since midnight
+    matchedWords.push("morning");
   } else if (lowerInput.includes("afternoon")) {
     time = 15 * 60; // 3:00 PM
+    matchedWords.push("afternoon");
   } else if (lowerInput.includes("evening")) {
     time = 19 * 60; // 7:00 PM
+    matchedWords.push("evening");
   } else if (lowerInput.includes("night")) {
     time = 21 * 60; // 9:00 PM
+    matchedWords.push("night");
   } else if (lowerInput.includes("noon")) {
     time = 12 * 60; // 12:00 PM
+    matchedWords.push("noon");
   } else if (lowerInput.includes("midnight")) {
     time = 0; // 12:00 AM
+    matchedWords.push("midnight");
   }
 
-  return { date, time };
+  return { date, time, matchedWords };
 };
 
 export const translateToWords = (date: number | null, time: number | null): string => {
