@@ -326,9 +326,6 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
               display: 'flex',
               alignItems: 'center',
               gap: 2,
-              border: '1px solid #ccc',
-              borderRadius: '8px',
-              padding: 2,
               marginTop: 2,
             }}
           >
