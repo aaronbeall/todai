@@ -1,18 +1,19 @@
 import { useState, useEffect, useRef } from 'react';
-import { TextField, Button, Stack, Card, CardContent, Typography, Box, IconButton, Drawer, List, ListItem, ListItemText, Chip, ListItemIcon, Badge, ListItemButton, Dialog, DialogActions, DialogContent, DialogTitle, Slider, Checkbox } from '@mui/material';
+import { TextField, Button, Stack, Card, CardContent, Typography, Box, IconButton, Drawer, List, ListItem, ListItemText, Chip, ListItemIcon, Badge, ListItemButton, Dialog, DialogActions, DialogContent, DialogTitle, Slider, Checkbox, Alert, Paper } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Add, MoreHoriz } from '@mui/icons-material';
 import { addTodo, getTodos, getTags, Todo, Tag } from './db';
 import { getGradientBackground, getTitleColor, getTimeOfDayEmoji } from './theme';
 import './App.css';
 import AddTodoDialog from './components/AddTodoDialog';
-import { formatRelativeTime, splitDateAndTime, formatDate } from './utils/dateTimeTranslator'; // Import relative time formatter and formatDate function
+import { formatRelativeTime, formatDate } from './utils/dateTimeTranslator'; // Import relative time formatter and formatDate function
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'; // Import Material-UI calendar icon
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Import the Material-UI CheckCircle icon
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'; // Import Material-UI RadioButtonUnchecked icon
 import { SideDrawer } from './components/SideDrawer';
 import Tooltip from '@mui/material/Tooltip'; // Import Tooltip from Material-UI
 import { sortAndCategorizeTodos } from './utils/todoSorter'; // Import the sorting utility
+import PaperStack from './components/PaperStack';
 
 function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -187,6 +188,30 @@ function App() {
         </IconButton>
       </Box>
 
+      <PaperStack
+        items={[
+          {
+            content: '🌟 Make the most of your day! Start with what matters most. 🌟',
+            dismissible: true,
+            onDismiss: () => console.log('Dismissed message 1'),
+          },
+          {
+            content: '💡 Tip: Review your "Next" tasks to plan ahead.',
+            action: {
+              label: 'View Next',
+              onClick: () => console.log('Navigated to Next tasks'),
+            },
+          },
+          {
+            content: '🎯 Focus on completing at least one "Now" task today.',
+            action: {
+              label: 'View Now',
+              onClick: () => console.log('Navigated to Now tasks'),
+            },
+          },
+        ]}
+      />
+
       <AddTodoDialog
         open={dialogOpen}
         onClose={handleDialogClose}
@@ -195,8 +220,8 @@ function App() {
         tags={tags} // Pass tags from App.tsx to AddTodoDialog
       />
 
+      <Typography variant="h4" sx={{ marginBottom: 2, color: getTitleColor(timeOffset) }}>Now</Typography>
       <Box sx={{ padding: 2, backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2, boxShadow: 1 }}>
-        <Typography variant="h6" sx={{ marginBottom: 2, color: 'rgba(255, 255, 255, 0.7)' }}>Now</Typography>
         <Stack spacing={1}>
           {categorizedTodos.now.map((todo) => (
             <TodoListItem
@@ -209,8 +234,8 @@ function App() {
         </Stack>
       </Box>
 
-      <Box sx={{ padding: 2, backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2, boxShadow: 1, marginTop: 4 }}>
-        <Typography variant="h6" sx={{ marginBottom: 2, color: 'rgba(255, 255, 255, 0.7)' }}>Next</Typography>
+      <Typography variant="h5" sx={{ marginBottom: 2, marginTop: 4, color: getTitleColor(timeOffset) }}>Next</Typography>
+      <Box sx={{ padding: 2, backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2, boxShadow: 1 }}>
         <Stack spacing={1}>
           {categorizedTodos.next.map((todo) => (
             <TodoListItem
@@ -223,8 +248,8 @@ function App() {
         </Stack>
       </Box>
 
-      <Box sx={{ padding: 2, backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2, boxShadow: 1, marginTop: 4 }}>
-        <Typography variant="h6" sx={{ marginBottom: 2, color: 'rgba(255, 255, 255, 0.7)' }}>Later</Typography>
+      <Typography variant="h5" sx={{ marginBottom: 2, marginTop: 4, color: getTitleColor(timeOffset) }}>Later</Typography>
+      <Box sx={{ padding: 2, backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2, boxShadow: 1 }}>
         <Stack spacing={1}>
           {categorizedTodos.later.map((todo) => (
             <TodoListItem
