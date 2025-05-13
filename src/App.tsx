@@ -22,7 +22,7 @@ function App() {
   const [tags, setTags] = useState<Tag[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [addTodoDialogOpen, setAddTodoDialogOpen] = useState(false);
   const [timeDialogOpen, setTimeDialogOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [useSolidBackground, setUseSolidBackground] = useState(false); // State to toggle background type
@@ -38,7 +38,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (dialogOpen) {
+    if (addTodoDialogOpen) {
       const timer = setTimeout(() => {
         if (inputRef.current) {
           inputRef.current.focus();
@@ -47,7 +47,7 @@ function App() {
 
       return () => clearTimeout(timer);
     }
-  }, [dialogOpen]);
+  }, [addTodoDialogOpen]);
 
   const handleAddTodo = async (todoData: { text: string; date: number | null }) => {
     const { text, date } = todoData;
@@ -79,8 +79,8 @@ function App() {
     }
   };
 
-  const handleDialogOpen = () => setDialogOpen(true);
-  const handleDialogClose = () => setDialogOpen(false);
+  const handleDialogOpen = () => setAddTodoDialogOpen(true);
+  const handleDialogClose = () => setAddTodoDialogOpen(false);
 
   const handleTimeClick = () => setTimeDialogOpen(true);
   const handleTimeDialogClose = () => setTimeDialogOpen(false);
@@ -103,8 +103,12 @@ function App() {
       .filter((todo) => !selectedTag || todo.tags.includes(selectedTag)) // Filter by selectedTag if applicable
   );
 
-  if (todos.length === 0) {
-    return <WelcomeScreen onAddTodo={handleDialogOpen} />;
+  const handleAddFirstTodo = () => {
+    setAddTodoDialogOpen(true); // Open the add todo dialog
+  };
+
+  if (todos.length === 0 && !addTodoDialogOpen) {
+    return <WelcomeScreen onAddFirstTodo={handleAddFirstTodo} />;
   }
 
   return (
@@ -231,7 +235,7 @@ function App() {
       <Box sx={{ height: 75 }} />
 
       <AddTodoDialog
-        open={dialogOpen}
+        open={addTodoDialogOpen}
         onClose={handleDialogClose}
         onAddTodo={(todoData) => handleAddTodo(todoData)} // Adjust to match the updated handler
         tags={tags} // Pass tags from App.tsx to AddTodoDialog

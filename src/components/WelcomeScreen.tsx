@@ -5,7 +5,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import Highlight from './Highlight';
 import { motion } from 'framer-motion';
 
-const WelcomeScreen = ({ onAddTodo }: { onAddTodo: () => void }) => {
+const WelcomeScreen = ({ onAddFirstTodo }: { onAddFirstTodo: () => void }) => {
   const { getGradientBackground, getTitleColor, getPrimaryColor, getSecondaryColor, timeOffset, setTimeOffset } = useTheme();
 
   return (
@@ -69,7 +69,7 @@ const WelcomeScreen = ({ onAddTodo }: { onAddTodo: () => void }) => {
           component={motion.button}
           variant="contained"
           sx={{ marginTop: 2, backgroundColor: getPrimaryColor(), color: 'white' }}
-          onClick={onAddTodo}
+          onClick={onAddFirstTodo}
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.8 }}
