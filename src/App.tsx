@@ -16,7 +16,7 @@ import PaperStack from './components/PaperStack';
 import { useTheme } from './contexts/ThemeContext';
 
 function App() {
-  const { getGradientBackground, getSolidBackground, getTitleColor, getTimeOfDayEmoji, timeOffset, setTimeOffset, getPrimaryColor } = useTheme();
+  const { getGradientBackground, getSolidBackground, getTitleColor, getTimeOfDayEmoji, timeOffset, setTimeOffset, getPrimaryColor, getSecondaryColor } = useTheme();
   const [todos, setTodos] = useState<Todo[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -135,7 +135,7 @@ function App() {
           right: 16,
           fontSize: '0.9rem',
           opacity: 0.7,
-          color: getPrimaryColor(), // Use primary color for text
+          color: getSecondaryColor(), // Use secondary color for specific text
           cursor: 'pointer',
         }}
         onClick={handleTimeClick}
@@ -288,7 +288,7 @@ const TodoListItem = ({
   tags: Tag[];
   handleToggleComplete: (id: number, completed: boolean) => void;
 }) => {
-  const { getPrimaryColor } = useTheme(); // Use useTheme to get primary color
+  const { getPrimaryColor, getSecondaryColor } = useTheme(); // Use useTheme to get primary color
 
   return (
     <Box
@@ -342,11 +342,11 @@ const TodoListItem = ({
                 sx={{
                   display: 'inline-flex',
                   alignItems: 'baseline',
-                  border: `1px solid ${getPrimaryColor()}`, // Use theme primary color with opacity
+                  border: `1px solid ${getSecondaryColor()}`, // Use theme primary color with opacity
                   borderRadius: '9999px',
                   padding: '2px 8px',
                   marginLeft: 1,
-                  color: `${getPrimaryColor()}`, // Use theme primary color with opacity
+                  color: `${getSecondaryColor()}`, // Use theme primary color with opacity
                 }}
               >
                 <CalendarTodayIcon

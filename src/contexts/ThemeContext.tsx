@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import { getGradientBackground as originalGetGradientBackground, getTitleColor as originalGetTitleColor, getTimeOfDayEmoji as originalGetTimeOfDayEmoji, getHourOfDay, getPrimaryColor as originalGetPrimaryColor, getSolidBackground as originalGetSolidBackground } from '../theme';
+import { getGradientBackground as originalGetGradientBackground, getTitleColor as originalGetTitleColor, getTimeOfDayEmoji as originalGetTimeOfDayEmoji, getHourOfDay, getPrimaryColor as originalGetPrimaryColor, getSolidBackground as originalGetSolidBackground, getSecondaryColor as originalGetSecondaryColor } from '../theme';
 
 interface ThemeContextProps {
   timeOffset: number;
@@ -9,6 +9,7 @@ interface ThemeContextProps {
   getTimeOfDayEmoji: (timeOffset?: number) => string;
   getPrimaryColor: (timeOffset?: number) => string;
   getSolidBackground: (timeOffset?: number) => string;
+  getSecondaryColor: (timeOffset?: number) => string;
 }
 
 const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
@@ -21,6 +22,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const getTimeOfDayEmoji = () => originalGetTimeOfDayEmoji(timeOffset);
   const getPrimaryColor = () => originalGetPrimaryColor(timeOffset);
   const getSolidBackground = () => originalGetSolidBackground(timeOffset);
+  const getSecondaryColor = () => originalGetSecondaryColor(timeOffset);
 
   return (
     <ThemeContext.Provider
@@ -32,6 +34,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         getTimeOfDayEmoji,
         getPrimaryColor,
         getSolidBackground,
+        getSecondaryColor,
       }}
     >
       {children}

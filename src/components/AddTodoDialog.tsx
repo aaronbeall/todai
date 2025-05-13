@@ -20,7 +20,7 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
   onAddTodo,
   tags, // Removed timeOffset prop
 }) => {
-  const { getTitleColor } = useTheme(); // Use theme context
+  const { getTitleColor, getPrimaryColor } = useTheme(); // Use theme context
 
   const [newTodo, setNewTodo] = useState<string>(""); // Move newTodo state inside AddTodoDialog
   const [tagSuggestions, setTagSuggestions] = useState<{ name: string; highlight: string; isNew?: boolean }[]>([]);
@@ -163,10 +163,6 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
     setSelectedTime(time);
   };
 
-  const getInputStyle = (value: number | null) => ({
-    opacity: value === null ? 0.5 : 1, // Fade out if value is null
-  });
-
   const formatDateForInput = (timestamp: number | null): string => {
     if (!timestamp) return '';
     const date = new Date(timestamp);
@@ -224,7 +220,7 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
             tagName="div"
             style={{
               paddingRight: '40px', // Add padding to prevent text overlap with the icon
-              border: '1px solid #ccc',
+              backgroundColor: `${getPrimaryColor()}33`, // Lightened primary color from theme
               borderRadius: '4px',
               padding: '8px',
               outline: 'none',
@@ -327,58 +323,49 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
         {showDateTimePicker && (
           <Box
             sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2,
               border: '1px solid #ccc',
               borderRadius: '8px',
               padding: 2,
               marginTop: 2,
             }}
           >
-            <Box
+            <TextField
+              type="date"
+              fullWidth
+              value={formatDateForInput(selectedDate)}
+              onChange={handleDateChange}
+              InputLabelProps={{ shrink: true }}
               sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 2,
+                backgroundColor: `${getPrimaryColor()}33`,
+                border: 'none',
+                borderRadius: '4px',
+                opacity: selectedDate === null ? 0.5 : 1,
+              }}
+            />
+            <TextField
+              type="time"
+              fullWidth
+              value={formatTimeForInput(selectedTime)}
+              onChange={handleTimeChange}
+              InputLabelProps={{ shrink: true }}
+              sx={{
+                backgroundColor: `${getPrimaryColor()}33`,
+                border: 'none',
+                borderRadius: '4px',
+                opacity: selectedTime === null ? 0.5 : 1,
+              }}
+            />
+            <IconButton
+              onClick={() => setShowDateTimePicker(false)}
+              sx={{
+                color: 'red',
               }}
             >
-              <TextField
-                type="date"
-                fullWidth
-                value={formatDateForInput(selectedDate)} // Use helper function for date formatting
-                onChange={handleDateChange}
-                InputLabelProps={{ shrink: true }}
-                sx={getInputStyle(selectedDate)} // Apply dynamic style to fade when null
-              />
-              <TextField
-                type="time"
-                fullWidth
-                value={formatTimeForInput(selectedTime)} // Use helper function for time formatting
-                onChange={handleTimeChange}
-                InputLabelProps={{ shrink: true }}
-                sx={getInputStyle(selectedTime)} // Apply dynamic style to fade when null
-              />
-              <IconButton
-                onClick={() => setShowDateTimePicker(false)}
-                sx={{
-                  color: 'red',
-                }}
-              >
-                <CloseIcon />
-              </IconButton>
-            </Box>
-            {/* Add a relative time label under the date and time inputs */}
-            {(selectedDate || selectedTime !== null) && (
-              <Typography
-                variant="caption"
-                sx={{
-                  display: 'block',
-                  marginTop: 1,
-                  color: 'gray',
-                  textAlign: 'center',
-                }}
-              >
-                {(selectedDate || selectedTime) && formatRelativeTime(combineDateAndTime({ date: selectedDate, time: selectedTime })!)}
-              </Typography>
-            )}
+              <CloseIcon />
+            </IconButton>
           </Box>
         )}
       </DialogContent>
