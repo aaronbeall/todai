@@ -26,13 +26,21 @@ export const SideDrawer = ({
       onClose={() => setDrawerOpen(false)}
       sx={{
         '& .MuiDrawer-paper': {
-          backgroundColor: 'rgba(255, 255, 255, 0.6)', // Semi-transparent white
-          backdropFilter: 'blur(10px)', // Blur effect
+          backgroundColor: 'white',
+          boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', // Subtle shadow for depth
         },
       }}
     >
-      <Box sx={{ width: 250, padding: 2 }}>
-        <Typography variant="h6" gutterBottom>
+      <Box sx={{ width: 280, padding: 3 }}> {/* Increased width and padding for better spacing */}
+        <Typography
+          variant="h6"
+          gutterBottom
+          sx={{
+            color: getTitleColor(),
+            fontWeight: 'bold',
+            textAlign: 'center',
+          }}
+        >
           Tags
         </Typography>
         <List>
@@ -43,20 +51,32 @@ export const SideDrawer = ({
               textTransform: 'none',
               color: selectedTag === null ? 'white' : 'inherit',
               backgroundColor: selectedTag === null ? getTitleColor() : 'transparent',
+              borderRadius: 2, // Rounded corners for better aesthetics
               '&.Mui-selected': {
                 backgroundColor: getTitleColor(),
                 color: 'white',
               },
+              '&:hover': {
+                backgroundColor: 'rgba(0, 0, 0, 0.1)',
+              },
             }}
           >
             <ListItemIcon>
-              <span role="img" aria-label="all-items" style={{ fontSize: '1.5rem', color: selectedTag === null ? 'white' : 'inherit' }}>🌟</span>
+              <span
+                role="img"
+                aria-label="all-items"
+                style={{ fontSize: '1.5rem', color: selectedTag === null ? 'white' : 'inherit' }}
+              >
+                🌟
+              </span>
             </ListItemIcon>
-            <ListItemText primary="All" />
+            <ListItemText primary="All" sx={{ fontWeight: selectedTag === null ? 'bold' : 'normal' }} />
           </ListItemButton>
           {tags.map((tag) => {
             const incompleteCount = todos.filter(
-              (todo) => todo.status !== 'completed' && todo.tags.some((t) => t.toLowerCase() === tag.name.toLowerCase())
+              (todo) =>
+                todo.status !== 'completed' &&
+                todo.tags.some((t) => t.toLowerCase() === tag.name.toLowerCase())
             ).length;
 
             return (
@@ -68,9 +88,13 @@ export const SideDrawer = ({
                   textTransform: 'none',
                   color: selectedTag?.toLowerCase() === tag.name.toLowerCase() ? 'white' : 'inherit',
                   backgroundColor: selectedTag?.toLowerCase() === tag.name.toLowerCase() ? getTitleColor() : 'transparent',
+                  borderRadius: 2, // Rounded corners for better aesthetics
                   '&.Mui-selected': {
                     backgroundColor: getTitleColor(),
                     color: 'white',
+                  },
+                  '&:hover': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
                   },
                 }}
               >
@@ -78,13 +102,16 @@ export const SideDrawer = ({
                   <Chip
                     sx={{
                       backgroundColor: tag.color,
-                      width: 24,
-                      height: 24,
+                      width: 28, // Slightly larger for better visibility
+                      height: 28,
                       borderRadius: '50%',
                     }}
                   />
                 </ListItemIcon>
-                <ListItemText primary={tag.name} />
+                <ListItemText
+                  primary={tag.name}
+                  sx={{ fontWeight: selectedTag?.toLowerCase() === tag.name.toLowerCase() ? 'bold' : 'normal' }}
+                />
                 <Badge
                   badgeContent={incompleteCount}
                   color="primary"
@@ -92,6 +119,9 @@ export const SideDrawer = ({
                     '& .MuiBadge-badge': {
                       backgroundColor: 'red',
                       color: 'white',
+                      fontSize: '0.75rem',
+                      minWidth: 20,
+                      height: 20,
                     },
                   }}
                 />
