@@ -16,7 +16,7 @@ import PaperStack from './components/PaperStack';
 import { useTheme } from './contexts/ThemeContext';
 
 function App() {
-  const { getGradientBackground, getSolidBackground, getTitleColor, getTimeOfDayEmoji, timeOffset, setTimeOffset, getForegroundColor } = useTheme();
+  const { getGradientBackground, getSolidBackground, getTitleColor, getTimeOfDayEmoji, timeOffset, setTimeOffset, getPrimaryColor } = useTheme();
   const [todos, setTodos] = useState<Todo[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -109,12 +109,12 @@ function App() {
         padding: 2,
         background: useSolidBackground ? getSolidBackground() : getGradientBackground(),
         transition: 'background 3s ease',
-        color: getForegroundColor(), // Use foreground color for text
+        color: getPrimaryColor(), // Use primary color for text
         position: 'relative',
       }}
     >
       <IconButton
-        sx={{ position: 'absolute', top: 16, left: 16, color: getForegroundColor() }} // Use foreground color for icon
+        sx={{ position: 'absolute', top: 16, left: 16, color: getPrimaryColor() }} // Use primary color for icon
         onClick={() => setDrawerOpen(true)}
       >
         <MenuIcon />
@@ -135,7 +135,7 @@ function App() {
           right: 16,
           fontSize: '0.9rem',
           opacity: 0.7,
-          color: getForegroundColor(), // Use foreground color for text
+          color: getPrimaryColor(), // Use primary color for text
           cursor: 'pointer',
         }}
         onClick={handleTimeClick}
@@ -288,7 +288,7 @@ const TodoListItem = ({
   tags: Tag[];
   handleToggleComplete: (id: number, completed: boolean) => void;
 }) => {
-  const { getForegroundColor, getPrimaryColor } = useTheme(); // Use useTheme to get foreground color
+  const { getPrimaryColor } = useTheme(); // Use useTheme to get primary color
 
   return (
     <Box
@@ -304,8 +304,8 @@ const TodoListItem = ({
         <Checkbox
           checked={todo.status === 'completed'}
           onChange={() => handleToggleComplete(todo.id, todo.status !== 'completed')}
-          icon={<RadioButtonUncheckedIcon style={{ fontSize: '20px', color: getPrimaryColor() }} />} // Use foreground color
-          checkedIcon={<CheckCircleIcon style={{ fontSize: '20px', color: getPrimaryColor() }} />} // Use foreground color
+          icon={<RadioButtonUncheckedIcon style={{ fontSize: '20px', color: getPrimaryColor() }} />} // Use primary color
+          checkedIcon={<CheckCircleIcon style={{ fontSize: '20px', color: getPrimaryColor() }} />} // Use primary color
           sx={{
             padding: 0,
           }}
@@ -314,7 +314,7 @@ const TodoListItem = ({
           component="div"
           sx={{
             textDecoration: todo.status === 'completed' ? 'line-through' : 'none',
-            color: getForegroundColor(), // Use foreground color
+            color: getPrimaryColor(), // Use primary color
           }}
         >
           {todo.text.split(/(#[^\s]+)/g).map((part, index) => {
@@ -327,7 +327,7 @@ const TodoListItem = ({
                   size="small"
                   sx={{
                     backgroundColor: tagColor,
-                    color: getForegroundColor(), // Use foreground color
+                    color: getPrimaryColor(), // Use primary color
                     marginLeft: 0.5,
                     marginRight: 0.5,
                   }}
@@ -342,11 +342,11 @@ const TodoListItem = ({
                 sx={{
                   display: 'inline-flex',
                   alignItems: 'baseline',
-                  border: `1px solid ${getPrimaryColor()}`, // Use theme foreground color with opacity
+                  border: `1px solid ${getPrimaryColor()}`, // Use theme primary color with opacity
                   borderRadius: '9999px',
                   padding: '2px 8px',
                   marginLeft: 1,
-                  color: `${getPrimaryColor()}`, // Use theme foreground color with opacity
+                  color: `${getPrimaryColor()}`, // Use theme primary color with opacity
                 }}
               >
                 <CalendarTodayIcon
@@ -368,7 +368,7 @@ const TodoListItem = ({
           )}
         </Typography>
       </Box>
-      <IconButton onClick={() => console.log('Options menu clicked')} sx={{ color: getForegroundColor() }}>
+      <IconButton onClick={() => console.log('Options menu clicked')} sx={{ color: getPrimaryColor() }}>
         <MoreHoriz />
       </IconButton>
     </Box>
