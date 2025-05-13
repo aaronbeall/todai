@@ -6,6 +6,7 @@ import { Tag } from '../db';
 import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
 import { translateToDateTime, formatRelativeTime, combineDateAndTime } from '../utils/dateTimeTranslator'; // Removed unused `combineDateAndTime` import.
 import { useTheme } from '../contexts/ThemeContext';
+import Highlight from './Highlight'; // Import the Highlight component
 
 interface AddTodoDialogProps {
   open: boolean;
@@ -251,7 +252,7 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
             fontSize: '0.9rem',
           }}
         >
-          Example: "Finish the #project and review the #code"
+          Example: "Finish the <Highlight>#project</Highlight> and review the <Highlight>#code</Highlight> by <Highlight>tomorrow</Highlight>"
         </Box>
         {tagSuggestions.length > 0 && (
           <Box
