@@ -1,16 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { TextField, Button, Stack, Card, CardContent, Typography, Box, IconButton, Drawer, List, ListItem, ListItemText, Chip, ListItemIcon, Badge, ListItemButton, Dialog, DialogActions, DialogContent, DialogTitle, Slider, Checkbox, Alert, Paper } from '@mui/material';
+import { Button, Stack, Typography, Box, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, Slider, Checkbox } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Add, MoreHoriz } from '@mui/icons-material';
+import { Add } from '@mui/icons-material';
 import { addTodo, getTodos, getTags, Todo, Tag } from './db';
 import './App.css';
 import AddTodoDialog from './components/AddTodoDialog';
-import { formatRelativeTime, formatDate } from './utils/dateTimeTranslator'; // Import relative time formatter and formatDate function
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday'; // Import Material-UI calendar icon
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Import the Material-UI CheckCircle icon
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'; // Import Material-UI RadioButtonUnchecked icon
 import { SideDrawer } from './components/SideDrawer';
-import Tooltip from '@mui/material/Tooltip'; // Import Tooltip from Material-UI
 import { sortAndCategorizeTodos } from './utils/todoSorter'; // Import the sorting utility
 import PaperStack from './components/PaperStack';
 import { useTheme } from './contexts/ThemeContext';
@@ -25,7 +20,6 @@ function App() {
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [addTodoDialogOpen, setAddTodoDialogOpen] = useState(false);
   const [timeDialogOpen, setTimeDialogOpen] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
   const [useSolidBackground, setUseSolidBackground] = useState(false); // State to toggle background type
 
   useEffect(() => {
@@ -37,18 +31,6 @@ function App() {
     };
     fetchTodosAndTags();
   }, []);
-
-  useEffect(() => {
-    if (addTodoDialogOpen) {
-      const timer = setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.focus();
-        }
-      }, 100); // Delay to ensure dialog is fully rendered
-
-      return () => clearTimeout(timer);
-    }
-  }, [addTodoDialogOpen]);
 
   const handleAddTodo = async (todoData: { text: string; date: number | null }) => {
     const { text, date } = todoData;
@@ -242,19 +224,23 @@ function App() {
         tags={tags} // Pass tags from App.tsx to AddTodoDialog
       />
 
-      <Typography variant="h4" sx={{ marginBottom: 2, color: getTitleColor() }}>Now</Typography>
-      <Box sx={{ padding: 2, backgroundColor: `rgba(0, 0, 0, 0.05)`, borderRadius: 2 }}>
-        <Stack spacing={1}>
-          {categorizedTodos.now.map((todo) => (
-            <TodoListItem
-              key={todo.id}
-              todo={todo}
-              tags={tags}
-              handleToggleComplete={handleToggleComplete}
-            />
-          ))}
-        </Stack>
-      </Box>
+      {categorizedTodos.now.length > 0 && (
+        <>
+          <Typography variant="h4" sx={{ marginBottom: 2, color: getTitleColor() }}>Now</Typography>
+          <Box sx={{ padding: 2, backgroundColor: `rgba(0, 0, 0, 0.05)`, borderRadius: 2 }}>
+            <Stack spacing={1}>
+              {categorizedTodos.now.map((todo) => (
+                <TodoListItem
+                  key={todo.id}
+                  todo={todo}
+                  tags={tags}
+                  handleToggleComplete={handleToggleComplete}
+                />
+              ))}
+            </Stack>
+          </Box>
+        </>
+      )}
 
       <Typography variant="h5" sx={{ marginBottom: 2, marginTop: 4, color: getTitleColor() }}>Next</Typography>
       <Box sx={{ padding: 2, backgroundColor: `rgba(0, 0, 0, 0.05)`, borderRadius: 2 }}>

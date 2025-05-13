@@ -190,7 +190,6 @@ export const determineDateTimeType = (timestamp: number): DateTimeType => {
 export const formatDate = (date: number): string => {
   const dateTimeType = determineDateTimeType(date);
   const dateObj = new Date(date);
-  console.log(dateObj, dateTimeType)
 
   switch (dateTimeType) {
     case 'time':
