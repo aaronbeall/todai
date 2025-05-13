@@ -22,6 +22,12 @@ export const getTitleColor = (timeOffset = 0) => {
   return '#243B55'; // Night matching color
 };
 
+export const getForegroundColor = (timeOffset = 0) => {
+  const hour = getHourOfDay(timeOffset);
+  if (hour < 6 || hour >= 18) return '#FFFFFF'; // Light text for dark backgrounds (night and early morning)
+  return '#000000'; // Dark text for light backgrounds (daytime)
+};
+
 export function getTimeOfDayEmoji(timeOffset = 0): string {
   const hour = getHourOfDay(timeOffset);
   if (hour >= 5 && hour < 12) return '☀️'; // Morning

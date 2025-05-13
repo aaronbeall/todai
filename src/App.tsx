@@ -16,7 +16,7 @@ import PaperStack from './components/PaperStack';
 import { useTheme } from './contexts/ThemeContext';
 
 function App() {
-  const { getGradientBackground, getTitleColor, getTimeOfDayEmoji, timeOffset, setTimeOffset } = useTheme();
+  const { getGradientBackground, getTitleColor, getTimeOfDayEmoji, timeOffset, setTimeOffset, getForegroundColor } = useTheme();
   const [todos, setTodos] = useState<Todo[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -107,15 +107,15 @@ function App() {
         minHeight: '100vh',
         padding: 2,
         background: getGradientBackground(),
-        color: 'white',
+        color: getForegroundColor(), // Use foreground color for text
         position: 'relative',
       }}
     >
       <IconButton
-        sx={{ position: 'absolute', top: 16, left: 16 }}
+        sx={{ position: 'absolute', top: 16, left: 16, color: getForegroundColor() }} // Use foreground color for icon
         onClick={() => setDrawerOpen(true)}
       >
-        <MenuIcon style={{ color: 'white' }} />
+        <MenuIcon />
       </IconButton>
       <SideDrawer
         drawerOpen={drawerOpen}
@@ -133,7 +133,7 @@ function App() {
           right: 16,
           fontSize: '0.9rem',
           opacity: 0.7,
-          color: getTitleColor(),
+          color: getForegroundColor(), // Use foreground color for text
           cursor: 'pointer',
         }}
         onClick={handleTimeClick}
@@ -279,86 +279,90 @@ const TodoListItem = ({
   todo: Todo;
   tags: Tag[];
   handleToggleComplete: (id: number, completed: boolean) => void;
-}) => (
-  <Box
-    key={todo.id}
-    sx={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingY: 0.5,
-    }}
-  >
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-      <Checkbox
-        checked={todo.status === 'completed'}
-        onChange={() => handleToggleComplete(todo.id, todo.status !== 'completed')}
-        icon={<RadioButtonUncheckedIcon style={{ fontSize: '20px', color: 'white' }} />}
-        checkedIcon={<CheckCircleIcon style={{ fontSize: '20px', color: 'white' }} />}
-        sx={{
-          padding: 0,
-        }}
-      />
-      <Typography
-        component="div"
-        sx={{
-          textDecoration: todo.status === 'completed' ? 'line-through' : 'none',
-          color: 'white',
-        }}
-      >
-        {todo.text.split(/(#[^\s]+)/g).map((part, index) => {
-          if (part.startsWith('#')) {
-            const tagColor = tags.find((tag) => tag.name === part)?.color || 'rgba(255, 255, 255, 0.3)';
-            return (
-              <Chip
-                key={index}
-                label={part}
-                size="small"
+}) => {
+  const { getForegroundColor } = useTheme(); // Use useTheme to get foreground color
+
+  return (
+    <Box
+      key={todo.id}
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingY: 0.5,
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Checkbox
+          checked={todo.status === 'completed'}
+          onChange={() => handleToggleComplete(todo.id, todo.status !== 'completed')}
+          icon={<RadioButtonUncheckedIcon style={{ fontSize: '20px', color: getForegroundColor() }} />} // Use foreground color
+          checkedIcon={<CheckCircleIcon style={{ fontSize: '20px', color: getForegroundColor() }} />} // Use foreground color
+          sx={{
+            padding: 0,
+          }}
+        />
+        <Typography
+          component="div"
+          sx={{
+            textDecoration: todo.status === 'completed' ? 'line-through' : 'none',
+            color: getForegroundColor(), // Use foreground color
+          }}
+        >
+          {todo.text.split(/(#[^\s]+)/g).map((part, index) => {
+            if (part.startsWith('#')) {
+              const tagColor = tags.find((tag) => tag.name === part)?.color || 'rgba(255, 255, 255, 0.3)';
+              return (
+                <Chip
+                  key={index}
+                  label={part}
+                  size="small"
+                  sx={{
+                    backgroundColor: tagColor,
+                    color: getForegroundColor(), // Use foreground color
+                    marginLeft: 0.5,
+                    marginRight: 0.5,
+                  }}
+                />
+              );
+            }
+            return <span key={index}>{part}</span>;
+          })}
+          {todo.date && (
+            <Tooltip title={todo.date != null ? formatDate(todo.date) : ''} arrow enterTouchDelay={0}>
+              <Box
                 sx={{
-                  backgroundColor: tagColor,
-                  color: 'white',
-                  marginLeft: 0.5,
-                  marginRight: 0.5,
+                  display: 'inline-flex',
+                  alignItems: 'baseline',
+                  border: `1px solid ${getForegroundColor()}80`, // Use theme foreground color with opacity
+                  borderRadius: '9999px',
+                  padding: '2px 8px',
+                  marginLeft: 1,
+                  color: `${getForegroundColor()}B3`, // Use theme foreground color with opacity
                 }}
-              />
-            );
-          }
-          return <span key={index}>{part}</span>;
-        })}
-        {todo.date && (
-          <Tooltip title={todo.date != null ? formatDate(todo.date) : ''} arrow enterTouchDelay={0}>
-            <Box
-              sx={{
-                display: 'inline-flex',
-                alignItems: 'baseline',
-                border: '1px solid rgba(255, 255, 255, 0.5)',
-                borderRadius: '9999px',
-                padding: '2px 8px',
-                marginLeft: 1,
-                color: 'rgba(255, 255, 255, 0.7)',
-              }}
-            >
-              <CalendarTodayIcon
-                sx={{
-                  fontSize: '1rem',
-                  marginRight: '4px',
-                  color: 'inherit',
-                  alignSelf: 'center',
-                }}
-              />
-              <Typography
-                variant="caption"
-                sx={{ color: 'inherit' }}
               >
-                {todo.date != null && formatRelativeTime(todo.date)}
-              </Typography>
-            </Box>
-          </Tooltip>
-        )}
-      </Typography>
+                <CalendarTodayIcon
+                  sx={{
+                    fontSize: '1rem',
+                    marginRight: '4px',
+                    color: 'inherit',
+                    alignSelf: 'center',
+                  }}
+                />
+                <Typography
+                  variant="caption"
+                  sx={{ color: 'inherit' }}
+                >
+                  {todo.date != null && formatRelativeTime(todo.date)}
+                </Typography>
+              </Box>
+            </Tooltip>
+          )}
+        </Typography>
+      </Box>
+      <IconButton onClick={() => console.log('Options menu clicked')} sx={{ color: 'white' }}>
+        <MoreHoriz />
+      </IconButton>
     </Box>
-    <IconButton onClick={() => console.log('Options menu clicked')} sx={{ color: 'white' }}>
-      <MoreHoriz />
-    </IconButton>
-  </Box>
-);
+  );
+};
