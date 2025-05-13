@@ -4,10 +4,9 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CloseIcon from '@mui/icons-material/Close'; // Add CloseIcon import
 import { Tag } from '../db';
 import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
-import { translateToDateTime, formatRelativeTime, combineDateAndTime } from '../utils/dateTimeTranslator'; // Removed unused `combineDateAndTime` import.
+import { translateToDateTime, combineDateAndTime } from '../utils/dateTimeTranslator'; // Removed unused `combineDateAndTime` import.
 import { useTheme } from '../contexts/ThemeContext';
 import Highlight from './Highlight'; // Import the Highlight component
-
 interface AddTodoDialogProps {
   open: boolean;
   onClose: () => void;
@@ -21,7 +20,7 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
   onAddTodo,
   tags, // Removed timeOffset prop
 }) => {
-  const { getTitleColor, getPrimaryColor } = useTheme(); // Use theme context
+  const { getTitleColor, getPrimaryColor, getSecondaryColor } = useTheme(); // Use theme context
 
   const [newTodo, setNewTodo] = useState<string>(""); // Move newTodo state inside AddTodoDialog
   const [tagSuggestions, setTagSuggestions] = useState<{ name: string; highlight: string; isNew?: boolean }[]>([]);
