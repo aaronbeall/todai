@@ -3,6 +3,7 @@ import { RadioButtonUnchecked as RadioButtonUncheckedIcon, CheckCircle as CheckC
 import { useTheme } from '../contexts/ThemeContext';
 import { formatDate, formatRelativeTime } from '../utils/dateTimeTranslator';
 import { Todo, Tag } from '../db';
+import tinycolor from 'tinycolor2';
 
 export const TodoListItem = ({
   todo,
@@ -51,10 +52,12 @@ export const TodoListItem = ({
                   label={part}
                   size="small"
                   sx={{
+                    border: `1px solid ${tinycolor(tagColor).darken().toString()}`, // Use theme primary color with opacity
                     backgroundColor: tagColor,
-                    color: getPrimaryColor(), // Use primary color
+                    color: 'white',
                     marginLeft: 0.5,
                     marginRight: 0.5,
+                    textShadow: '0 0 3px rgba(0, 0, 0, 0.5)',
                   }}
                 />
               );
