@@ -212,6 +212,9 @@ function App() {
         ]}
       />
 
+      {/* Spacer to ensure lists appear below the PaperStack */}
+      <Box sx={{ height: 75 }} />
+
       <AddTodoDialog
         open={dialogOpen}
         onClose={handleDialogClose}
