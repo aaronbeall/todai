@@ -36,7 +36,7 @@ export const getForegroundColor = (timeOffset = 0) => {
   const hour = getHourOfDay(timeOffset);
   if (hour < 6) return '#AEEFFF'; // Early morning
   if (hour < 12) return '#075854'; // Morning
-  if (hour < 15) return '#4c0314'; // Early afternoon
+  if (hour < 15) return '#710c23'; // Early afternoon
   if (hour < 18) return '#420412'; // Late afternoon
   if (hour < 21) return '#d7ebff'; // Evening
   return '#d9ecff'; // Night
