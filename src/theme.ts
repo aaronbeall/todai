@@ -4,52 +4,52 @@ export const getHourOfDay = (timeOffset = 0) => {
 
 export const getGradientBackground = (timeOffset = 0) => {
   const hour = getHourOfDay(timeOffset);
-  if (hour < 6) return 'linear-gradient(to bottom, #2C3E50, #4CA1AF)'; // Early morning
-  if (hour < 12) return 'linear-gradient(to bottom, #FFDEE9, #B5FFFC)'; // Morning
-  if (hour < 15) return 'linear-gradient(to bottom, #FF9A8B, #FF6A88, #FF99AC)'; // Early afternoon
-  if (hour < 18) return 'linear-gradient(to bottom, #FFD194, #D1913C)'; // Late afternoon
-  if (hour < 21) return 'linear-gradient(to bottom, #1E3C72, #2A5298)'; // Evening
-  return 'linear-gradient(to bottom, #141E30, #243B55)'; // Night
+  if (hour < 6) return 'linear-gradient(to bottom, #1A1A2E, #16213E)'; // Early morning
+  if (hour < 12) return 'linear-gradient(to bottom, #FF7E5F, #FEB47B)'; // Morning (reverted to original vibrant gradient)
+  if (hour < 15) return 'linear-gradient(to bottom, #FFE0B2, #FFCC80)'; // Early afternoon (lightened)
+  if (hour < 18) return 'linear-gradient(to bottom, #43C6AC, #F8FFAE)'; // Late afternoon
+  if (hour < 21) return 'linear-gradient(to bottom, #5A3D6A, #A43931)'; // Evening (lightened for better text visibility)
+  return 'linear-gradient(to bottom, #0F2027, #203A43, #2C5364)'; // Night
 };
 
 export const getSolidBackground = (timeOffset = 0) => {
   const hour = getHourOfDay(timeOffset);
-  if (hour < 6) return '#2C3E50'; // Early morning
-  if (hour < 12) return '#FFDEE9'; // Morning
-  if (hour < 15) return '#FF9A8B'; // Early afternoon
-  if (hour < 18) return '#FFD194'; // Late afternoon
-  if (hour < 21) return '#1E3C72'; // Evening
-  return '#141E30'; // Night
+  if (hour < 6) return '#1A1A2E'; // Early morning
+  if (hour < 12) return '#FF7E5F'; // Morning (reverted to original design)
+  if (hour < 15) return '#FFE0B2'; // Early afternoon (lightened)
+  if (hour < 18) return '#43C6AC'; // Late afternoon
+  if (hour < 21) return '#5A3D6A'; // Evening (lightened for better text visibility)
+  return '#0F2027'; // Night
 };
 
 export const getTitleColor = (timeOffset = 0) => {
   const hour = getHourOfDay(timeOffset);
-  if (hour < 6) return '#4CA1AF'; // Early morning matching color
-  if (hour < 12) return '#FF6F91'; // Morning matching color
-  if (hour < 15) return '#FF3D68'; // Early afternoon matching color
-  if (hour < 18) return '#D1913C'; // Late afternoon matching color
-  if (hour < 21) return '#2A5298'; // Evening matching color
-  return '#243B55'; // Night matching color
+  if (hour < 6) return '#E94560'; // Early morning
+  if (hour < 12) return '#0F3460'; // Morning
+  if (hour < 15) return '#FF6F61'; // Early afternoon
+  if (hour < 18) return '#2D4059'; // Late afternoon
+  if (hour < 21) return '#ff6f61'; // Evening (brightened for better visibility)
+  return '#287c9a'; // Night (brighter for contrast)
 };
 
 export const getForegroundColor = (timeOffset = 0) => {
   const hour = getHourOfDay(timeOffset);
-  if (hour < 6) return '#AEEFFF'; // Early morning
-  if (hour < 12) return '#075854'; // Morning
-  if (hour < 15) return '#710c23'; // Early afternoon
-  if (hour < 18) return '#420412'; // Late afternoon
-  if (hour < 21) return '#d7ebff'; // Evening
-  return '#d9ecff'; // Night
+  if (hour < 6) return '#E94560'; // Early morning
+  if (hour < 12) return '#0F3460'; // Morning
+  if (hour < 15) return '#FF6F61'; // Early afternoon
+  if (hour < 18) return '#2D4059'; // Late afternoon
+  if (hour < 21) return '#ff8f8f'; // Evening (brightened for better visibility)
+  return '#50c2ea'; // Night (brighter for contrast)
 };
 
 export const getPrimaryColor = (timeOffset = 0) => {
   const hour = getHourOfDay(timeOffset);
-  if (hour < 6) return '#0fd0ff'; // Early morning
-  if (hour < 12) return '#00aba3'; // Morning
-  if (hour < 15) return '#a70026'; // Early afternoon
-  if (hour < 18) return '#9a0000'; // Late afternoon
-  if (hour < 21) return '#6bb5ff'; // Evening
-  return '#51a1f1'; // Night
+  if (hour < 6) return '#E94560'; // Early morning
+  if (hour < 12) return '#0F3460'; // Morning
+  if (hour < 15) return '#FF6F61'; // Early afternoon
+  if (hour < 18) return '#2D4059'; // Late afternoon
+  if (hour < 21) return '#ff8f8f'; // Evening
+  return '#50c2ea'; // Night (brighter for contrast)
 };
 
 export function getTimeOfDayEmoji(timeOffset = 0): string {
