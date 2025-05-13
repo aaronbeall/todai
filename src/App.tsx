@@ -107,6 +107,7 @@ function App() {
         minHeight: '100vh',
         padding: 2,
         background: getGradientBackground(),
+        transition: 'background 3s ease',
         color: getForegroundColor(), // Use foreground color for text
         position: 'relative',
       }}
@@ -219,13 +220,12 @@ function App() {
       <AddTodoDialog
         open={dialogOpen}
         onClose={handleDialogClose}
-        timeOffset={timeOffset}
         onAddTodo={(todoData) => handleAddTodo(todoData)} // Adjust to match the updated handler
         tags={tags} // Pass tags from App.tsx to AddTodoDialog
       />
 
       <Typography variant="h4" sx={{ marginBottom: 2, color: getTitleColor() }}>Now</Typography>
-      <Box sx={{ padding: 2, backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2, boxShadow: 1 }}>
+      <Box sx={{ padding: 2, backgroundColor: `rgba(0, 0, 0, 0.05)`, borderRadius: 2 }}>
         <Stack spacing={1}>
           {categorizedTodos.now.map((todo) => (
             <TodoListItem
@@ -239,7 +239,7 @@ function App() {
       </Box>
 
       <Typography variant="h5" sx={{ marginBottom: 2, marginTop: 4, color: getTitleColor() }}>Next</Typography>
-      <Box sx={{ padding: 2, backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2, boxShadow: 1 }}>
+      <Box sx={{ padding: 2, backgroundColor: `rgba(0, 0, 0, 0.05)`, borderRadius: 2 }}>
         <Stack spacing={1}>
           {categorizedTodos.next.map((todo) => (
             <TodoListItem
@@ -253,7 +253,7 @@ function App() {
       </Box>
 
       <Typography variant="h5" sx={{ marginBottom: 2, marginTop: 4, color: getTitleColor() }}>Later</Typography>
-      <Box sx={{ padding: 2, backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2, boxShadow: 1 }}>
+      <Box sx={{ padding: 2, backgroundColor: `rgba(0, 0, 0, 0.05)`, borderRadius: 2 }}>
         <Stack spacing={1}>
           {categorizedTodos.later.map((todo) => (
             <TodoListItem
@@ -280,7 +280,7 @@ const TodoListItem = ({
   tags: Tag[];
   handleToggleComplete: (id: number, completed: boolean) => void;
 }) => {
-  const { getForegroundColor } = useTheme(); // Use useTheme to get foreground color
+  const { getForegroundColor, getPrimaryColor } = useTheme(); // Use useTheme to get foreground color
 
   return (
     <Box
@@ -296,8 +296,8 @@ const TodoListItem = ({
         <Checkbox
           checked={todo.status === 'completed'}
           onChange={() => handleToggleComplete(todo.id, todo.status !== 'completed')}
-          icon={<RadioButtonUncheckedIcon style={{ fontSize: '20px', color: getForegroundColor() }} />} // Use foreground color
-          checkedIcon={<CheckCircleIcon style={{ fontSize: '20px', color: getForegroundColor() }} />} // Use foreground color
+          icon={<RadioButtonUncheckedIcon style={{ fontSize: '20px', color: getPrimaryColor() }} />} // Use foreground color
+          checkedIcon={<CheckCircleIcon style={{ fontSize: '20px', color: getPrimaryColor() }} />} // Use foreground color
           sx={{
             padding: 0,
           }}
@@ -334,11 +334,11 @@ const TodoListItem = ({
                 sx={{
                   display: 'inline-flex',
                   alignItems: 'baseline',
-                  border: `1px solid ${getForegroundColor()}80`, // Use theme foreground color with opacity
+                  border: `1px solid ${getPrimaryColor()}`, // Use theme foreground color with opacity
                   borderRadius: '9999px',
                   padding: '2px 8px',
                   marginLeft: 1,
-                  color: `${getForegroundColor()}B3`, // Use theme foreground color with opacity
+                  color: `${getPrimaryColor()}`, // Use theme foreground color with opacity
                 }}
               >
                 <CalendarTodayIcon
@@ -360,7 +360,7 @@ const TodoListItem = ({
           )}
         </Typography>
       </Box>
-      <IconButton onClick={() => console.log('Options menu clicked')} sx={{ color: 'white' }}>
+      <IconButton onClick={() => console.log('Options menu clicked')} sx={{ color: getForegroundColor() }}>
         <MoreHoriz />
       </IconButton>
     </Box>
