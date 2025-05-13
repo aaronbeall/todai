@@ -16,7 +16,7 @@ import PaperStack from './components/PaperStack';
 import { useTheme } from './contexts/ThemeContext';
 
 function App() {
-  const { getGradientBackground, getTitleColor, getTimeOfDayEmoji, timeOffset, setTimeOffset, getForegroundColor } = useTheme();
+  const { getGradientBackground, getSolidBackground, getTitleColor, getTimeOfDayEmoji, timeOffset, setTimeOffset, getForegroundColor } = useTheme();
   const [todos, setTodos] = useState<Todo[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -24,6 +24,7 @@ function App() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [timeDialogOpen, setTimeDialogOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [useSolidBackground, setUseSolidBackground] = useState(false); // State to toggle background type
 
   useEffect(() => {
     const fetchTodosAndTags = async () => {
@@ -106,7 +107,7 @@ function App() {
       sx={{
         minHeight: '100vh',
         padding: 2,
-        background: getGradientBackground(),
+        background: useSolidBackground ? getSolidBackground() : getGradientBackground(),
         transition: 'background 3s ease',
         color: getForegroundColor(), // Use foreground color for text
         position: 'relative',
@@ -157,6 +158,13 @@ function App() {
               color: getTitleColor(),
             }}
           />
+          <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 2 }}>
+            <Checkbox
+              checked={useSolidBackground}
+              onChange={(e) => setUseSolidBackground(e.target.checked)}
+            />
+            <Typography>Use Solid Background</Typography>
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleTimeDialogClose} color="primary">Close</Button>

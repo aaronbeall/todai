@@ -12,6 +12,16 @@ export const getGradientBackground = (timeOffset = 0) => {
   return 'linear-gradient(to bottom, #141E30, #243B55)'; // Night
 };
 
+export const getSolidBackground = (timeOffset = 0) => {
+  const hour = getHourOfDay(timeOffset);
+  if (hour < 6) return '#2C3E50'; // Early morning
+  if (hour < 12) return '#FFDEE9'; // Morning
+  if (hour < 15) return '#FF9A8B'; // Early afternoon
+  if (hour < 18) return '#FFD194'; // Late afternoon
+  if (hour < 21) return '#1E3C72'; // Evening
+  return '#141E30'; // Night
+};
+
 export const getTitleColor = (timeOffset = 0) => {
   const hour = getHourOfDay(timeOffset);
   if (hour < 6) return '#4CA1AF'; // Early morning matching color
@@ -26,7 +36,7 @@ export const getForegroundColor = (timeOffset = 0) => {
   const hour = getHourOfDay(timeOffset);
   if (hour < 6) return '#AEEFFF'; // Early morning
   if (hour < 12) return '#075854'; // Morning
-  if (hour < 15) return '#710c23'; // Early afternoon
+  if (hour < 15) return '#4c0314'; // Early afternoon
   if (hour < 18) return '#420412'; // Late afternoon
   if (hour < 21) return '#d7ebff'; // Evening
   return '#d9ecff'; // Night
