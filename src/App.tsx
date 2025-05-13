@@ -242,33 +242,41 @@ function App() {
         </>
       )}
 
-      <Typography variant="h5" sx={{ marginBottom: 2, marginTop: 4, color: getTitleColor() }}>Next</Typography>
-      <Box sx={{ padding: 2, backgroundColor: `rgba(0, 0, 0, 0.05)`, borderRadius: 2 }}>
-        <Stack spacing={1}>
-          {categorizedTodos.next.map((todo) => (
-            <TodoListItem
-              key={todo.id}
-              todo={todo}
-              tags={tags}
-              handleToggleComplete={handleToggleComplete}
-            />
-          ))}
-        </Stack>
-      </Box>
+      {categorizedTodos.next.length > 0 && (
+        <>
+          <Typography variant="h5" sx={{ marginBottom: 2, marginTop: 4, color: getTitleColor() }}>Next</Typography>
+          <Box sx={{ padding: 2, backgroundColor: `rgba(0, 0, 0, 0.05)`, borderRadius: 2 }}>
+            <Stack spacing={1}>
+              {categorizedTodos.next.map((todo) => (
+                <TodoListItem
+                  key={todo.id}
+                  todo={todo}
+                  tags={tags}
+                  handleToggleComplete={handleToggleComplete}
+                />
+              ))}
+            </Stack>
+          </Box>
+        </>
+      )}
 
-      <Typography variant="h5" sx={{ marginBottom: 2, marginTop: 4, color: getTitleColor() }}>Later</Typography>
-      <Box sx={{ padding: 2, backgroundColor: `rgba(0, 0, 0, 0.05)`, borderRadius: 2 }}>
-        <Stack spacing={1}>
-          {categorizedTodos.later.map((todo) => (
-            <TodoListItem
-              key={todo.id}
-              todo={todo}
-              tags={tags}
-              handleToggleComplete={handleToggleComplete}
-            />
-          ))}
-        </Stack>
-      </Box>
+      {categorizedTodos.later.length > 0 && (
+        <>
+          <Typography variant="h5" sx={{ marginBottom: 2, marginTop: 4, color: getTitleColor() }}>Later</Typography>
+          <Box sx={{ padding: 2, backgroundColor: `rgba(0, 0, 0, 0.05)`, borderRadius: 2 }}>
+            <Stack spacing={1}>
+              {categorizedTodos.later.map((todo) => (
+                <TodoListItem
+                  key={todo.id}
+                  todo={todo}
+                  tags={tags}
+                  handleToggleComplete={handleToggleComplete}
+                />
+              ))}
+            </Stack>
+          </Box>
+        </>
+      )}
     </Box>
   );
 }
