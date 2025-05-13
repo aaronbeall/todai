@@ -1,25 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Paper, IconButton, Button, Stack } from '@mui/material';
-import { MoreHoriz } from '@mui/icons-material';
+import { Close } from '@mui/icons-material';
 
 interface PaperStackProps {
   items: Array<{
+    key: string; // Unique key for each item
     content: React.ReactNode;
     action?: {
       label: string;
       onClick: () => void;
     };
-    dismissible?: boolean;
-    onDismiss?: () => void;
   }>;
 }
 
-const PaperStack: React.FC<PaperStackProps> = ({ items }) => {
+const PaperStack: React.FC<PaperStackProps> = ({ items: initialItems }) => {
+  const [items, setItems] = useState(initialItems);
+
+  const handleDismiss = (key: string) => {
+    setItems((prevItems) => prevItems.filter((item) => item.key !== key));
+  };
+
   return (
     <Stack sx={{ marginBottom: 4, position: 'relative' }}>
       {items.map((item, index) => (
         <Paper
-          key={index}
+          key={item.key} // Use the unique key for each item
           elevation={3 - index}
           sx={{
             padding: 2,
@@ -31,14 +36,13 @@ const PaperStack: React.FC<PaperStackProps> = ({ items }) => {
             gap: 1,
             position: 'absolute',
             zIndex: items.length - index,
-            transform: `scale(${1 - index * 0.02}) rotate(${-index * .1}deg)`,
+            transform: `scale(${1 - index * 0.02}) rotate(${-index * 0.1}deg)`,
             top: index * 10,
-            // top: 0,
-            backgroundColor: '#ffffff',
-            // opacity: .5,
             left: 0,
             right: 0,
             filter: `brightness(${1 - index * 0.2})`,
+            transition: 'all 0.3s ease, opacity 0.3s ease',
+            opacity: 1,
           }}
         >
           {item.content}
@@ -48,11 +52,9 @@ const PaperStack: React.FC<PaperStackProps> = ({ items }) => {
                 {item.action.label}
               </Button>
             )}
-            {item.dismissible && (
-              <IconButton size="small" onClick={item.onDismiss}>
-                <MoreHoriz />
-              </IconButton>
-            )}
+            <IconButton size="small" onClick={() => handleDismiss(item.key)}>
+              <Close />
+            </IconButton>
           </div>
         </Paper>
       ))}

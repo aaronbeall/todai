@@ -191,11 +191,11 @@ function App() {
       <PaperStack
         items={[
           {
+            key: '1',
             content: '🌟 Make the most of your day! Start with what matters most. 🌟',
-            dismissible: true,
-            onDismiss: () => console.log('Dismissed message 1'),
           },
           {
+            key: '2',
             content: '💡 Tip: Review your "Next" tasks to plan ahead.',
             action: {
               label: 'View Next',
@@ -203,6 +203,7 @@ function App() {
             },
           },
           {
+            key: '3',
             content: '🎯 Focus on completing at least one "Now" task today.',
             action: {
               label: 'View Now',
