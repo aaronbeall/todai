@@ -4,6 +4,7 @@ const defaultTheme = {
     solidBackground: '#1A1A2E',
     titleColor: '#E94560',
     primaryColor: '#E94560',
+    secondaryColor: '#E76A7A', // Subtle version of primaryColor
     emoji: '🌙',
   },
   morning: {
@@ -11,6 +12,7 @@ const defaultTheme = {
     solidBackground: '#FF7E5F',
     titleColor: '#0F3460',
     primaryColor: '#0F3460',
+    secondaryColor: '#0E2F50', // Subtle version of primaryColor
     emoji: '☀️',
   },
   earlyAfternoon: {
@@ -18,6 +20,7 @@ const defaultTheme = {
     solidBackground: '#FFE0B2',
     titleColor: '#FF6F61',
     primaryColor: '#ff4c3a',
+    secondaryColor: '#E64530', // Subtle version of primaryColor
     emoji: '🌤️',
   },
   lateAfternoon: {
@@ -25,6 +28,7 @@ const defaultTheme = {
     solidBackground: '#43C6AC',
     titleColor: '#2D4059',
     primaryColor: '#2D4059',
+    secondaryColor: '#24384A', // Subtle version of primaryColor
     emoji: '🌤️',
   },
   evening: {
@@ -32,6 +36,7 @@ const defaultTheme = {
     solidBackground: '#5A3D6A',
     titleColor: '#ff6f61',
     primaryColor: '#ff8f8f',
+    secondaryColor: '#E67A7A', // Subtle version of primaryColor
     emoji: '🌇',
   },
   night: {
@@ -39,6 +44,7 @@ const defaultTheme = {
     solidBackground: '#0F2027',
     titleColor: '#287c9a',
     primaryColor: '#50c2ea',
+    secondaryColor: '#3F9AC0', // Subtle version of primaryColor
     emoji: '🌙',
   },
 };
@@ -61,4 +67,5 @@ export const getGradientBackground = (timeOffset = 0) => getThemeProperty('gradi
 export const getSolidBackground = (timeOffset = 0) => getThemeProperty('solidBackground', timeOffset);
 export const getTitleColor = (timeOffset = 0) => getThemeProperty('titleColor', timeOffset);
 export const getPrimaryColor = (timeOffset = 0) => getThemeProperty('primaryColor', timeOffset);
+export const getSecondaryColor = (timeOffset = 0) => getThemeProperty('secondaryColor', timeOffset);
 export const getTimeOfDayEmoji = (timeOffset = 0) => getThemeProperty('emoji', timeOffset);
