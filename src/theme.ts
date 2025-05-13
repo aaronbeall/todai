@@ -1,9 +1,9 @@
-export const calculateCurrentHour = (timeOffset = 0) => {
+export const getHourOfDay = (timeOffset = 0) => {
   return (new Date().getHours() + timeOffset + 24) % 24; // Ensure hour is within 0-23
 };
 
 export const getGradientBackground = (timeOffset = 0) => {
-  const hour = calculateCurrentHour(timeOffset);
+  const hour = getHourOfDay(timeOffset);
   if (hour < 6) return 'linear-gradient(to bottom, #2C3E50, #4CA1AF)'; // Early morning
   if (hour < 12) return 'linear-gradient(to bottom, #FFDEE9, #B5FFFC)'; // Morning
   if (hour < 15) return 'linear-gradient(to bottom, #FF9A8B, #FF6A88, #FF99AC)'; // Early afternoon
@@ -13,7 +13,7 @@ export const getGradientBackground = (timeOffset = 0) => {
 };
 
 export const getTitleColor = (timeOffset = 0) => {
-  const hour = calculateCurrentHour(timeOffset);
+  const hour = getHourOfDay(timeOffset);
   if (hour < 6) return '#4CA1AF'; // Early morning matching color
   if (hour < 12) return '#FF6F91'; // Morning matching color
   if (hour < 15) return '#FF3D68'; // Early afternoon matching color
@@ -23,7 +23,7 @@ export const getTitleColor = (timeOffset = 0) => {
 };
 
 export function getTimeOfDayEmoji(timeOffset = 0): string {
-  const hour = calculateCurrentHour(timeOffset);
+  const hour = getHourOfDay(timeOffset);
   if (hour >= 5 && hour < 12) return '☀️'; // Morning
   if (hour >= 12 && hour < 18) return '🌤️'; // Afternoon
   if (hour >= 18 && hour < 21) return '🌇'; // Evening

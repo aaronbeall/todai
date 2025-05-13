@@ -63,6 +63,7 @@ const PaperStack: React.FC<PaperStackProps> = ({ items: initialItems }) => {
             justifyContent: 'center',
             fontSize: '0.7rem',
             fontWeight: 'bold',
+            transition: 'all 0.3s ease',
           }}
         >
           {items.length > 0 ? items.length : initialItems.length}
