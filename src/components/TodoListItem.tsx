@@ -24,6 +24,7 @@ export const TodoListItem = ({
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingY: 0.5,
+        opacity: todo.status === 'completed' ? 0.5 : 1, // Add opacity for completed items
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

@@ -80,11 +80,11 @@ function App() {
     return simulatedDate.toLocaleDateString(undefined, { weekday: 'long' });
   };
 
-  const categorizedTodos = sortAndCategorizeTodos(
-    todos
-      .filter((todo) => todo.status === 'active') // Only active todos
-      .filter((todo) => !selectedTag || todo.tags.includes(selectedTag)) // Filter by selectedTag if applicable
-  );
+  const filteredTodos = todos.filter((todo) => !selectedTag || todo.tags.includes(selectedTag));
+  const completedTodos = filteredTodos.filter((todo) => todo.status === 'completed');
+  const activeTodos = filteredTodos.filter((todo) => todo.status === 'active');
+
+  const categorizedTodos = sortAndCategorizeTodos(activeTodos);
 
   const handleAddFirstTodo = () => {
     setAddTodoDialogOpen(true); // Open the add todo dialog
@@ -276,6 +276,25 @@ function App() {
             </Stack>
           </Box>
         </>
+      )}
+
+      {/* Display the Completed list if there are any */}
+      {completedTodos.length > 0 && (
+        <Box sx={{ marginTop: 4 }}>
+          <Typography variant="h6" sx={{ marginBottom: 2, color: getTitleColor() }}>Completed</Typography>
+          <Box>
+            <Stack spacing={1}>
+              {completedTodos.map((todo) => (
+                <TodoListItem
+                  key={todo.id}
+                  todo={todo}
+                  tags={tags}
+                  handleToggleComplete={handleToggleComplete}
+                />
+              ))}
+            </Stack>
+          </Box>
+        </Box>
       )}
     </Box>
   );
