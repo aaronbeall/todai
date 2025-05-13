@@ -14,6 +14,7 @@ import Tooltip from '@mui/material/Tooltip'; // Import Tooltip from Material-UI
 import { sortAndCategorizeTodos } from './utils/todoSorter'; // Import the sorting utility
 import PaperStack from './components/PaperStack';
 import { useTheme } from './contexts/ThemeContext';
+import WelcomeScreen from './components/WelcomeScreen';
 
 function App() {
   const { getGradientBackground, getSolidBackground, getTitleColor, getTimeOfDayEmoji, timeOffset, setTimeOffset, getPrimaryColor, getSecondaryColor } = useTheme();
@@ -101,6 +102,10 @@ function App() {
       .filter((todo) => todo.status === 'active') // Only active todos
       .filter((todo) => !selectedTag || todo.tags.includes(selectedTag)) // Filter by selectedTag if applicable
   );
+
+  if (todos.length === 0) {
+    return <WelcomeScreen onAddTodo={handleDialogOpen} />;
+  }
 
   return (
     <Box
