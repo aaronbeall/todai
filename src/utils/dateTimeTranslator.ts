@@ -176,10 +176,10 @@ export const determineDateTimeType = (timestamp: number): DateTimeType => {
   }
 
   if (
-    dateObj.getUTCHours() === 0 &&
-    dateObj.getUTCMinutes() === 0 &&
-    dateObj.getUTCSeconds() === 0 &&
-    dateObj.getUTCMilliseconds() === 0
+    dateObj.getHours() === 0 &&
+    dateObj.getMinutes() === 0 &&
+    dateObj.getSeconds() === 0 &&
+    dateObj.getMilliseconds() === 0
   ) {
     return 'date'; // Date with no time
   }
@@ -190,6 +190,7 @@ export const determineDateTimeType = (timestamp: number): DateTimeType => {
 export const formatDate = (date: number): string => {
   const dateTimeType = determineDateTimeType(date);
   const dateObj = new Date(date);
+  console.log(dateObj, dateTimeType)
 
   switch (dateTimeType) {
     case 'time':
