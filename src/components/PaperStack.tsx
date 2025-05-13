@@ -3,7 +3,7 @@ import { Paper, IconButton, Button, Stack } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { getTitleColor } from '../theme'; // Import getTitleColor
+import { useTheme } from '../contexts/ThemeContext';
 
 interface PaperStackProps {
   items: Array<{
@@ -17,8 +17,8 @@ interface PaperStackProps {
 }
 
 const PaperStack: React.FC<PaperStackProps> = ({ items: initialItems }) => {
+  const { getTitleColor } = useTheme(); // Use getTitleColor from context
   const [items, setItems] = useState(initialItems);
-  const currentIndex = initialItems.length - items.length + 1;
 
   const handleDismiss = (key: string) => {
     setItems((prevItems) => prevItems.filter((item) => item.key !== key));
@@ -53,7 +53,7 @@ const PaperStack: React.FC<PaperStackProps> = ({ items: initialItems }) => {
             position: 'absolute',
             top: 0,
             right: 0,
-            backgroundColor: items.length > 0 ? '#f50057' : getTitleColor(), // Use getTitleColor for badge when no items
+            backgroundColor: items.length > 0 ? '#f50057' : getTitleColor(), // Use getTitleColor from context
             color: 'white',
             borderRadius: '50%',
             width: 20,

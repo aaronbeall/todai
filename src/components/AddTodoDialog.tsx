@@ -2,18 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button, Typography, Box, IconButton, TextField } from '@mui/material'; // Removed unused Grid import
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CloseIcon from '@mui/icons-material/Close'; // Add CloseIcon import
-import { getTitleColor } from '../theme';
 import { Tag } from '../db';
 import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
 import { translateToDateTime, formatRelativeTime, combineDateAndTime } from '../utils/dateTimeTranslator'; // Removed unused `combineDateAndTime` import.
-
-// Removed unused `formatDate` import.
+import { useTheme } from '../contexts/ThemeContext';
 
 interface AddTodoDialogProps {
   open: boolean;
   onClose: () => void;
   onAddTodo: (newTodo: { text: string; date: number | null }) => void; // Update onAddTodo to accept an object with text and date
-  timeOffset: number; // Make timeOffset optional in AddTodoDialogProps
   tags: Tag[]; // Add tags prop to pass available tags
 }
 
@@ -21,9 +18,10 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
   open,
   onClose,
   onAddTodo,
-  timeOffset,
-  tags, // Destructure tags prop
+  tags, // Removed timeOffset prop
 }) => {
+  const { getTitleColor } = useTheme(); // Use theme context
+
   const [newTodo, setNewTodo] = useState<string>(""); // Move newTodo state inside AddTodoDialog
   const [tagSuggestions, setTagSuggestions] = useState<{ name: string; highlight: string; isNew?: boolean }[]>([]);
   const [showDateTimePicker, setShowDateTimePicker] = useState(false); // State to toggle date-time picker
@@ -204,11 +202,11 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
         }
       }}
     >
-      <DialogTitle sx={{ textAlign: 'center', fontSize: '2rem', color: getTitleColor(timeOffset) }}>
+      <DialogTitle sx={{ textAlign: 'center', fontSize: '2rem', color: getTitleColor() }}>
         🎉 Add a New Todo 📝
       </DialogTitle>
       <DialogContent sx={{ textAlign: 'center', padding: 4 }}>
-        <Typography variant="h6" gutterBottom sx={{ color: getTitleColor(timeOffset) }}>
+        <Typography variant="h6" gutterBottom sx={{ color: getTitleColor() }}>
           What do you want to accomplish today? 🌟
         </Typography>
         <Box
@@ -397,7 +395,7 @@ const AddTodoDialog: React.FC<AddTodoDialogProps> = ({
           onClick={handleAddTodo} // Use the new handleAddTodo function
           variant="contained"
           color="primary"
-          sx={{ fontSize: '1rem', padding: '0.5rem 2rem', backgroundColor: getTitleColor(timeOffset) }}
+          sx={{ fontSize: '1rem', padding: '0.5rem 2rem', backgroundColor: getTitleColor() }}
         >
           ✅ Add Todo
         </Button>

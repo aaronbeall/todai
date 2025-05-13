@@ -3,7 +3,6 @@ import { TextField, Button, Stack, Card, CardContent, Typography, Box, IconButto
 import MenuIcon from '@mui/icons-material/Menu';
 import { Add, MoreHoriz } from '@mui/icons-material';
 import { addTodo, getTodos, getTags, Todo, Tag } from './db';
-import { getGradientBackground, getTitleColor, getTimeOfDayEmoji } from './theme';
 import './App.css';
 import AddTodoDialog from './components/AddTodoDialog';
 import { formatRelativeTime, formatDate } from './utils/dateTimeTranslator'; // Import relative time formatter and formatDate function
@@ -14,14 +13,15 @@ import { SideDrawer } from './components/SideDrawer';
 import Tooltip from '@mui/material/Tooltip'; // Import Tooltip from Material-UI
 import { sortAndCategorizeTodos } from './utils/todoSorter'; // Import the sorting utility
 import PaperStack from './components/PaperStack';
+import { useTheme } from './contexts/ThemeContext';
 
 function App() {
+  const { getGradientBackground, getTitleColor, getTimeOfDayEmoji, timeOffset, setTimeOffset } = useTheme();
   const [todos, setTodos] = useState<Todo[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [timeOffset, setTimeOffset] = useState(0);
   const [timeDialogOpen, setTimeDialogOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -106,7 +106,7 @@ function App() {
       sx={{
         minHeight: '100vh',
         padding: 2,
-        background: getGradientBackground(timeOffset),
+        background: getGradientBackground(),
         color: 'white',
         position: 'relative',
       }}
@@ -133,7 +133,7 @@ function App() {
           right: 16,
           fontSize: '0.9rem',
           opacity: 0.7,
-          color: getTitleColor(timeOffset),
+          color: getTitleColor(),
           cursor: 'pointer',
         }}
         onClick={handleTimeClick}
@@ -153,7 +153,7 @@ function App() {
             marks
             valueLabelDisplay="on"
             sx={{
-              color: getTitleColor(timeOffset),
+              color: getTitleColor(),
             }}
           />
         </DialogContent>
@@ -166,20 +166,20 @@ function App() {
         <Typography
           variant="h3"
           align="center"
-          sx={{ color: getTitleColor(timeOffset), display: 'flex', alignItems: 'center', gap: 1 }}
+          sx={{ color: getTitleColor(), display: 'flex', alignItems: 'center', gap: 1 }}
         >
           {getSimulatedDay()}
           <span role="img" aria-label="time-of-day">
-            {getTimeOfDayEmoji(timeOffset)}
+            {getTimeOfDayEmoji()}
           </span>
         </Typography>
         <IconButton
           onClick={handleDialogOpen}
           sx={{
-            backgroundColor: getTitleColor(timeOffset),
+            backgroundColor: getTitleColor(),
             color: 'white',
             '&:hover': {
-              backgroundColor: getTitleColor(timeOffset),
+              backgroundColor: getTitleColor(),
               opacity: 0.9,
             },
           }}
@@ -224,7 +224,7 @@ function App() {
         tags={tags} // Pass tags from App.tsx to AddTodoDialog
       />
 
-      <Typography variant="h4" sx={{ marginBottom: 2, color: getTitleColor(timeOffset) }}>Now</Typography>
+      <Typography variant="h4" sx={{ marginBottom: 2, color: getTitleColor() }}>Now</Typography>
       <Box sx={{ padding: 2, backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2, boxShadow: 1 }}>
         <Stack spacing={1}>
           {categorizedTodos.now.map((todo) => (
@@ -238,7 +238,7 @@ function App() {
         </Stack>
       </Box>
 
-      <Typography variant="h5" sx={{ marginBottom: 2, marginTop: 4, color: getTitleColor(timeOffset) }}>Next</Typography>
+      <Typography variant="h5" sx={{ marginBottom: 2, marginTop: 4, color: getTitleColor() }}>Next</Typography>
       <Box sx={{ padding: 2, backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2, boxShadow: 1 }}>
         <Stack spacing={1}>
           {categorizedTodos.next.map((todo) => (
@@ -252,7 +252,7 @@ function App() {
         </Stack>
       </Box>
 
-      <Typography variant="h5" sx={{ marginBottom: 2, marginTop: 4, color: getTitleColor(timeOffset) }}>Later</Typography>
+      <Typography variant="h5" sx={{ marginBottom: 2, marginTop: 4, color: getTitleColor() }}>Later</Typography>
       <Box sx={{ padding: 2, backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2, boxShadow: 1 }}>
         <Stack spacing={1}>
           {categorizedTodos.later.map((todo) => (
